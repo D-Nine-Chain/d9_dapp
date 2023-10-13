@@ -11,12 +11,13 @@ declare module '@polkadot/api/types' {
 }
 
 const wsProvider = new WsProvider(PUBLIC_WS_CONNECTION);
-const api = await ApiPromise.create({ provider: wsProvider, rpc: customRpc });
 // customTypes.d.ts
 export async function getParent(account: string) {
+   const api = await ApiPromise.create({ provider: wsProvider, rpc: customRpc });
    return await api.rpc.referral.getParent(account);
 }
 
 export async function getAncestors(account: string) {
+   const api = await ApiPromise.create({ provider: wsProvider, rpc: customRpc });
    return await api.rpc.referral.getAncestors(account);
 }
