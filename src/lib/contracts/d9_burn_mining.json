@@ -1,0 +1,672 @@
+{
+   "source": {
+      "hash": "0x4d6300715f54413fae6eba428f2732b156cfe83245d94880354614ec97196226",
+      "language": "ink! 4.3.0",
+      "compiler": "rustc 1.72.0",
+      "build_info": {
+         "build_mode": "debug",
+         "cargo_contract_version": "3.2.0",
+         "rust_toolchain": "stable-aarch64-apple-darwin",
+         "wasm_opt_settings": {
+            "keep_debug_symbols": false,
+            "optimization_passes": "z"
+         }
+      }
+   },
+   "contract": {
+      "name": "d9-burn-mining",
+      "version": "0.1.0",
+      "authors": [
+         "d9dev"
+      ]
+   },
+   "spec": {
+      "constructors": [
+         {
+            "args": [
+               {
+                  "label": "master_controller_contract",
+                  "type": {
+                     "displayname": [
+                        "accountid"
+                     ],
+                     "type": 1
+                  }
+               },
+               {
+                  "label": "burn_minimum",
+                  "type": {
+                     "displayname": [
+                        "balance"
+                     ],
+                     "type": 0
+                  }
+               }
+            ],
+            "default": false,
+            "docs": [],
+            "label": "new",
+            "payable": true,
+            "returntype": {
+               "displayname": [
+                  "ink_primitives",
+                  "constructorresult"
+               ],
+               "type": 5
+            },
+            "selector": "0x9bae9d5e"
+         }
+      ],
+      "docs": [],
+      "environment": {
+         "accountid": {
+            "displayname": [
+               "accountid"
+            ],
+            "type": 1
+         },
+         "balance": {
+            "displayname": [
+               "balance"
+            ],
+            "type": 0
+         },
+         "blocknumber": {
+            "displayname": [
+               "blocknumber"
+            ],
+            "type": 14
+         },
+         "chainextension": {
+            "displayname": [
+               "chainextension"
+            ],
+            "type": 15
+         },
+         "hash": {
+            "displayname": [
+               "hash"
+            ],
+            "type": 13
+         },
+         "maxeventtopics": 4,
+         "timestamp": {
+            "displayname": [
+               "timestamp"
+            ],
+            "type": 4
+         }
+      },
+      "events": [],
+      "lang_error": {
+         "displayname": [
+            "ink",
+            "langerror"
+         ],
+         "type": 7
+      },
+      "messages": [
+         {
+            "args": [
+               {
+                  "label": "account_id",
+                  "type": {
+                     "displayname": [
+                        "accountid"
+                     ],
+                     "type": 1
+                  }
+               },
+               {
+                  "label": "burn_amount",
+                  "type": {
+                     "displayname": [
+                        "balance"
+                     ],
+                     "type": 0
+                  }
+               }
+            ],
+            "default": false,
+            "docs": [
+               " executes a restricted burn operation.",
+               "",
+               " this function allows only the master controller contract to initiate a burn operation for a given account.",
+               " it ensures the calling contract has the correct permission to burn tokens, then performs the burn operation",
+               " and returns the net balance due (outstanding balance minus paid balance) for the account.",
+               "",
+               " # parameters",
+               " - `account_id`: the account id for which the burn operation should be executed.",
+               " - `burn_amount`: the amount of tokens to be burned from the specified account.",
+               "",
+               " # returns",
+               " - `ok(balance)`: if the burn operation is successful, it returns the net balance due for the account.",
+               " - `err(error::restrictedfunction)`: if the calling contract is not the master controller contract.",
+               " - `err(error)`: other errors as reported by the internal `_burn` function.",
+               "",
+               " # note",
+               " the function performs permission checks to ensure only authorized contracts can initiate the burn."
+            ],
+            "label": "controller_restricted_burn",
+            "mutates": true,
+            "payable": false,
+            "returntype": {
+               "displayname": [
+                  "ink",
+                  "messageresult"
+               ],
+               "type": 8
+            },
+            "selector": "0xb5f0f8e3"
+         },
+         {
+            "args": [
+               {
+                  "label": "account_id",
+                  "type": {
+                     "displayname": [
+                        "accountid"
+                     ],
+                     "type": 1
+                  }
+               }
+            ],
+            "default": false,
+            "docs": [
+               " executes a withdrawal operation for a portfolio, restricted to the master controller contract.",
+               "",
+               " this function can only be invoked by the master controller contract and is used to process",
+               " withdrawals for a given account from its portfolio. it calculates the allowed withdrawal amount,",
+               " updates the account's records, and then returns the withdrawal amount along with the timestamp",
+               " of the last withdrawal operation.",
+               "",
+               " # parameters",
+               " - `account_id`: the account id for which the withdrawal should be executed.",
+               "",
+               " # returns",
+               " - `ok((balance, timestamp))`: on successful withdrawal, returns the allowed withdrawal amount and",
+               "   the timestamp of the last withdrawal.",
+               " - `err(error::restrictedfunction)`: if the calling contract is not the master controller contract.",
+               " - `err(error::noaccountfound)`: if the specified account does not exist.",
+               " - `err(error)`: other errors as reported by the internal `_update_account` function.",
+               "",
+               " # note",
+               " permission checks are performed to ensure only the master controller contract can initiate the withdrawal."
+            ],
+            "label": "portfolio_executed_withdrawal",
+            "mutates": true,
+            "payable": false,
+            "returntype": {
+               "displayname": [
+                  "ink",
+                  "messageresult"
+               ],
+               "type": 9
+            },
+            "selector": "0x4b17321e"
+         }
+      ]
+   },
+   "storage": {
+      "root": {
+         "layout": {
+            "struct": {
+               "fields": [
+                  {
+                     "layout": {
+                        "leaf": {
+                           "key": "0x00000000",
+                           "ty": 0
+                        }
+                     },
+                     "name": "total_amount_burned"
+                  },
+                  {
+                     "layout": {
+                        "leaf": {
+                           "key": "0x00000000",
+                           "ty": 1
+                        }
+                     },
+                     "name": "master_controller_contract"
+                  },
+                  {
+                     "layout": {
+                        "root": {
+                           "layout": {
+                              "struct": {
+                                 "fields": [
+                                    {
+                                       "layout": {
+                                          "leaf": {
+                                             "key": "0x125717b1",
+                                             "ty": 0
+                                          }
+                                       },
+                                       "name": "amount_burned"
+                                    },
+                                    {
+                                       "layout": {
+                                          "leaf": {
+                                             "key": "0x125717b1",
+                                             "ty": 0
+                                          }
+                                       },
+                                       "name": "balance_due"
+                                    },
+                                    {
+                                       "layout": {
+                                          "leaf": {
+                                             "key": "0x125717b1",
+                                             "ty": 0
+                                          }
+                                       },
+                                       "name": "balance_paid"
+                                    },
+                                    {
+                                       "layout": {
+                                          "leaf": {
+                                             "key": "0x125717b1",
+                                             "ty": 4
+                                          }
+                                       },
+                                       "name": "last_withdrawal"
+                                    },
+                                    {
+                                       "layout": {
+                                          "leaf": {
+                                             "key": "0x125717b1",
+                                             "ty": 4
+                                          }
+                                       },
+                                       "name": "last_burn"
+                                    }
+                                 ],
+                                 "name": "account"
+                              }
+                           },
+                           "root_key": "0x125717b1"
+                        }
+                     },
+                     "name": "accounts"
+                  },
+                  {
+                     "layout": {
+                        "leaf": {
+                           "key": "0x00000000",
+                           "ty": 0
+                        }
+                     },
+                     "name": "burn_minimum"
+                  }
+               ],
+               "name": "d9burnmining"
+            }
+         },
+         "root_key": "0x00000000"
+      }
+   },
+   "types": [
+      {
+         "id": 0,
+         "type": {
+            "def": {
+               "primitive": "u128"
+            }
+         }
+      },
+      {
+         "id": 1,
+         "type": {
+            "def": {
+               "composite": {
+                  "fields": [
+                     {
+                        "type": 2,
+                        "typename": "[u8; 32]"
+                     }
+                  ]
+               }
+            },
+            "path": [
+               "ink_primitives",
+               "types",
+               "accountid"
+            ]
+         }
+      },
+      {
+         "id": 2,
+         "type": {
+            "def": {
+               "array": {
+                  "len": 32,
+                  "type": 3
+               }
+            }
+         }
+      },
+      {
+         "id": 3,
+         "type": {
+            "def": {
+               "primitive": "u8"
+            }
+         }
+      },
+      {
+         "id": 4,
+         "type": {
+            "def": {
+               "primitive": "u64"
+            }
+         }
+      },
+      {
+         "id": 5,
+         "type": {
+            "def": {
+               "variant": {
+                  "variants": [
+                     {
+                        "fields": [
+                           {
+                              "type": 6
+                           }
+                        ],
+                        "index": 0,
+                        "name": "ok"
+                     },
+                     {
+                        "fields": [
+                           {
+                              "type": 7
+                           }
+                        ],
+                        "index": 1,
+                        "name": "err"
+                     }
+                  ]
+               }
+            },
+            "params": [
+               {
+                  "name": "t",
+                  "type": 6
+               },
+               {
+                  "name": "e",
+                  "type": 7
+               }
+            ],
+            "path": [
+               "result"
+            ]
+         }
+      },
+      {
+         "id": 6,
+         "type": {
+            "def": {
+               "tuple": []
+            }
+         }
+      },
+      {
+         "id": 7,
+         "type": {
+            "def": {
+               "variant": {
+                  "variants": [
+                     {
+                        "index": 1,
+                        "name": "couldnotreadinput"
+                     }
+                  ]
+               }
+            },
+            "path": [
+               "ink_primitives",
+               "langerror"
+            ]
+         }
+      },
+      {
+         "id": 8,
+         "type": {
+            "def": {
+               "variant": {
+                  "variants": [
+                     {
+                        "fields": [
+                           {
+                              "type": 0
+                           }
+                        ],
+                        "index": 0,
+                        "name": "ok"
+                     },
+                     {
+                        "fields": [
+                           {
+                              "type": 7
+                           }
+                        ],
+                        "index": 1,
+                        "name": "err"
+                     }
+                  ]
+               }
+            },
+            "params": [
+               {
+                  "name": "t",
+                  "type": 0
+               },
+               {
+                  "name": "e",
+                  "type": 7
+               }
+            ],
+            "path": [
+               "result"
+            ]
+         }
+      },
+      {
+         "id": 9,
+         "type": {
+            "def": {
+               "variant": {
+                  "variants": [
+                     {
+                        "fields": [
+                           {
+                              "type": 10
+                           }
+                        ],
+                        "index": 0,
+                        "name": "ok"
+                     },
+                     {
+                        "fields": [
+                           {
+                              "type": 7
+                           }
+                        ],
+                        "index": 1,
+                        "name": "err"
+                     }
+                  ]
+               }
+            },
+            "params": [
+               {
+                  "name": "t",
+                  "type": 10
+               },
+               {
+                  "name": "e",
+                  "type": 7
+               }
+            ],
+            "path": [
+               "result"
+            ]
+         }
+      },
+      {
+         "id": 10,
+         "type": {
+            "def": {
+               "variant": {
+                  "variants": [
+                     {
+                        "fields": [
+                           {
+                              "type": 11
+                           }
+                        ],
+                        "index": 0,
+                        "name": "ok"
+                     },
+                     {
+                        "fields": [
+                           {
+                              "type": 12
+                           }
+                        ],
+                        "index": 1,
+                        "name": "err"
+                     }
+                  ]
+               }
+            },
+            "params": [
+               {
+                  "name": "t",
+                  "type": 11
+               },
+               {
+                  "name": "e",
+                  "type": 12
+               }
+            ],
+            "path": [
+               "result"
+            ]
+         }
+      },
+      {
+         "id": 11,
+         "type": {
+            "def": {
+               "tuple": [
+                  0,
+                  4
+               ]
+            }
+         }
+      },
+      {
+         "id": 12,
+         "type": {
+            "def": {
+               "variant": {
+                  "variants": [
+                     {
+                        "index": 0,
+                        "name": "burnamountinsufficient"
+                     },
+                     {
+                        "index": 1,
+                        "name": "noaccountfound"
+                     },
+                     {
+                        "index": 2,
+                        "name": "earlywithdrawalattempt"
+                     },
+                     {
+                        "index": 3,
+                        "name": "contractbalancetoolow"
+                     },
+                     {
+                        "index": 4,
+                        "name": "restrictedfunction"
+                     },
+                     {
+                        "index": 5,
+                        "name": "useportfolioexecutefunction"
+                     },
+                     {
+                        "index": 6,
+                        "name": "withdrawalexceedsbalance"
+                     },
+                     {
+                        "index": 7,
+                        "name": "transferfailed"
+                     },
+                     {
+                        "index": 8,
+                        "name": "invalidcaller"
+                     },
+                     {
+                        "index": 9,
+                        "name": "invalidburncontract"
+                     },
+                     {
+                        "index": 10,
+                        "name": "burncontractalreadyadded"
+                     }
+                  ]
+               }
+            },
+            "path": [
+               "d9_burn_common",
+               "error"
+            ]
+         }
+      },
+      {
+         "id": 13,
+         "type": {
+            "def": {
+               "composite": {
+                  "fields": [
+                     {
+                        "type": 2,
+                        "typename": "[u8; 32]"
+                     }
+                  ]
+               }
+            },
+            "path": [
+               "ink_primitives",
+               "types",
+               "hash"
+            ]
+         }
+      },
+      {
+         "id": 14,
+         "type": {
+            "def": {
+               "primitive": "u32"
+            }
+         }
+      },
+      {
+         "id": 15,
+         "type": {
+            "def": {
+               "variant": {}
+            },
+            "path": [
+               "d9_chain_extension",
+               "d9chainextension"
+            ]
+         }
+      }
+   ],
+   "version": "4"
+}
