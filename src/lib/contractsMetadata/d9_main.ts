@@ -1,10 +1,10 @@
 export const main = {
    "source": {
-      "hash": "0x6c416880dc1bfdba85c9c416a840898a8e02f9f960554ffa7e6ba9953bf460f2",
+      "hash": "0xfe86ad9a8b2308ed017318e3b08e399cd485e0cd8592435222bcb543fedc9d44",
       "language": "ink! 4.3.0",
       "compiler": "rustc 1.72.0",
       "build_info": {
-         "build_mode": "Release",
+         "build_mode": "Debug",
          "cargo_contract_version": "3.2.0",
          "rust_toolchain": "stable-aarch64-apple-darwin",
          "wasm_opt_settings": {

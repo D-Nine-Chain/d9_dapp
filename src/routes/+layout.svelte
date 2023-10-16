@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { accountStore } from '$lib/accountStore';
+	import { accountStore } from '$lib/stores/accountStore';
 	import NoAccountModal from '$lib/components/NoAccountModal.svelte';
 	import { checkForExtension, getAccounts } from '$lib/utils';
+	import { web3FromAddress } from '@polkadot/extension-dapp';
 	let showNoAccountModal: boolean = true;
 	let extensions: any[] = [];
 	let account: any;
@@ -12,9 +13,11 @@
 		console.log(accounts);
 		if (accounts.length > 0) {
 			account = accounts[0];
+			const injector = await web3FromAddress(account.address);
+			account.signer = injector.signer;
 			accountStore.set(account);
-			console.log('should change');
 		}
+
 		console.log(account);
 	});
 	$: {
@@ -96,9 +99,9 @@
 	}
 	#content {
 		margin-top: 70px;
-		display: flex;
 		flex-direction: column;
 		align-items: center;
+		justify-content: center;
 		width: 100%;
 		background-color: white;
 	}
