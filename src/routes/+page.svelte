@@ -1,18 +1,15 @@
 <script lang="ts">
 	import Ancestor from '$lib/components/Ancestor.svelte';
-	import { getParent, getAncestors, burn } from '$lib/rpc';
-	import { getPortfolio } from '$lib/burn';
+	import { getParent, getAncestors } from '$lib/rpc';
 	import { accountStore } from '$lib/stores/accountStore';
 	import BurnPortfolio from '$lib/components/BurnPortfolio.svelte';
+	import { burn } from '$lib/burn';
 	let ancestry: any[] = [];
 	let parent: any;
-	let burnPortfolio: any;
 	accountStore.subscribe(async (userAccount) => {
 		if (userAccount.address) {
 			parent = await getParent(userAccount.address);
 			ancestry = await getAncestors(userAccount.address);
-			burnPortfolio = await getPortfolio();
-			console.log(burnPortfolio);
 		}
 	});
 	let burnAmount: number = 200;
@@ -21,16 +18,13 @@
 <div id="home">
 	<div id="left">
 		<div>父母的地址:{parent}</div>
-		{#if burnPortfolio}
-			<BurnPortfolio {burnPortfolio} />
-		{/if}
+		<BurnPortfolio />
 		<div id="functions">
 			<div>
 				<input bind:value={burnAmount} placeholder="enter burn amount" />
 				<button
 					on:click={async () => {
-						let result = await burn(burnAmount);
-						console.log(result);
+						await burn(burnAmount);
 					}}><h2>烧伤</h2></button
 				>
 			</div>

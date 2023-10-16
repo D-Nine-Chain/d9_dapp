@@ -1,9 +1,11 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { accountStore } from '$lib/stores/accountStore';
+	import { totalBurnedStore } from '$lib/stores/totalBurnedStore';
 	import NoAccountModal from '$lib/components/NoAccountModal.svelte';
 	import { checkForExtension, getAccounts } from '$lib/utils';
 	import { web3FromAddress } from '@polkadot/extension-dapp';
+	import { updateData } from '$lib/rpc';
 	let showNoAccountModal: boolean = true;
 	let extensions: any[] = [];
 	let account: any;
@@ -16,32 +18,41 @@
 			const injector = await web3FromAddress(account.address);
 			account.signer = injector.signer;
 			accountStore.set(account);
+			updateData();
 		}
 
 		console.log(account);
 	});
+	let totalBurned: any;
 	$: {
 		if (extensions.length > 0) {
 			showNoAccountModal = false;
 		}
+		totalBurned = $totalBurnedStore;
 	}
 </script>
 
 <div id="home">
-	<div id="account-data">
-		<div id="account-row">
-			<div id="your-account">
-				{#if account}
-					<h1>你的账户 {account.meta.name}</h1>
-				{/if}
-			</div>
-			<div id="account-info">
-				<p>
+	<div id="top-row">
+		<div id="account-data">
+			<div id="account-row">
+				<div id="your-account">
 					{#if account}
-						{account.address}
+						<h1>你的账户 {account.meta.name}</h1>
 					{/if}
-				</p>
+				</div>
+				<div id="account-info">
+					<p>
+						{#if account}
+							{account.address}
+						{/if}
+					</p>
+				</div>
 			</div>
+		</div>
+		<div id="total-burned">
+			<h3>燃烧总量。</h3>
+			<p>{totalBurned}</p>
 		</div>
 	</div>
 
@@ -64,6 +75,11 @@
 	#home {
 		display: flex;
 		flex-direction: column;
+	}
+	#top-row {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
 	}
 	#account-data {
 		width: 400px;
