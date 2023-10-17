@@ -2,9 +2,10 @@
 	import { getBurnPortfolio } from '$lib/burn';
 	import { burnPortfolioStore } from '$lib/stores/burnPortfolioStore';
 	import type { BurnPortfolio } from '$lib/types/types';
+	import Time from 'svelte-time';
 	import { onMount } from 'svelte';
 	const DECIMAL = 100_000;
-	let burnPortfolio: BurnPortfolio;
+	let burnPortfolio: any;
 	$: burnPortfolio = $burnPortfolioStore;
 	onMount(async () => {
 		await getBurnPortfolio();
@@ -14,19 +15,19 @@
 <div id="portfolio">
 	<div class="data">
 		<h3>燃烧量 (Burn Amount):</h3>
-		<p id="burn-amount">{burnPortfolio.amountBurned / DECIMAL}</p>
+		<p id="burn-amount">{parseInt(burnPortfolio.amountBurned)}</p>
 		<!-- Placeholder, update this with actual data -->
 	</div>
 
 	<div class="data">
 		<h3>余额到期 (Balance Due):</h3>
-		<p id="balance-due">{burnPortfolio.balanceDue / DECIMAL}</p>
+		<p id="balance-due">{parseInt(burnPortfolio.balanceDue)}</p>
 		<!-- Placeholder, update this with actual data -->
 	</div>
 
 	<div class="data">
 		<h3>已付余额 (Balance Paid):</h3>
-		<p id="balance-paid">{burnPortfolio.balancePaid / DECIMAL}</p>
+		<p id="balance-paid">{parseInt(burnPortfolio.balancePaid)}</p>
 		<!-- Placeholder, update this with actual data -->
 	</div>
 

@@ -1,11 +1,11 @@
 import '@polkadot/api/types/rpc';
 export type BurnPortfolio = {
-   amountBurned: number;
-   balanceDue: number;
-   balancePaid: number;
+   amountBurned: string;
+   balanceDue: string;
+   balancePaid: string;
    lastBurn: {
-      time: number;
+      time: string;
       contract: string;
    };
-   lastWithdrawal: number;
+   lastWithdrawal: string;
 }

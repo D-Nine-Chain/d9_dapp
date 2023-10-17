@@ -1,10 +1,10 @@
 export const main = {
    "source": {
-      "hash": "0xfe86ad9a8b2308ed017318e3b08e399cd485e0cd8592435222bcb543fedc9d44",
+      "hash": "0xb2e4c317d322495f67ff38f0e8a31a5bec3da8d1e8def691a5a47c5d319b3322",
       "language": "ink! 4.3.0",
       "compiler": "rustc 1.72.0",
       "build_info": {
-         "build_mode": "Debug",
+         "build_mode": "Release",
          "cargo_contract_version": "3.2.0",
          "rust_toolchain": "stable-aarch64-apple-darwin",
          "wasm_opt_settings": {
@@ -77,19 +77,19 @@ export const main = {
             "displayName": [
                "BlockNumber"
             ],
-            "type": 21
+            "type": 22
          },
          "chainExtension": {
             "displayName": [
                "ChainExtension"
             ],
-            "type": 22
+            "type": 23
          },
          "hash": {
             "displayName": [
                "Hash"
             ],
-            "type": 20
+            "type": 21
          },
          "maxEventTopics": 4,
          "timestamp": {
@@ -187,36 +187,21 @@ export const main = {
             ],
             "default": false,
             "docs": [
-               " Burns a specified amount from the caller's account and logs the transaction.",
-               "",
-               " This function allows an account to burn an amount, which is then recorded",
-               " in their associated `BurnPortfolio`. The amount is deducted from the sender's",
-               " balance and transferred to this main account.",
+               " Executes a burn by making a cross-contract call, updates the total burned amount,",
+               " updates the user's portfolio, and emits a `BurnExecuted` event.",
                "",
                " # Arguments",
                "",
-               " * `burn_contract`: The account ID of the contract to which the burned amount will be sent.",
+               " * `burn_contract` - Account ID of the contract to call for the burn.",
                "",
-               " # Requirements",
+               " # Errors",
                "",
-               " * The caller must transfer a non-zero amount to this function.",
-               " * The specified `burn_contract` must be one of the valid burn contracts recognized by this contract.",
+               " Returns `Err` if the burn amount is zero, the burn contract is not valid,",
+               " or the cross-contract call fails.",
                "",
                " # Returns",
                "",
-               " * On success: Returns the updated `BurnPortfolio` for the caller.",
-               " * On error: Returns an `Error` indicating the reason for the failure, such as insufficient burn amount or invalid burn contract.",
-               "",
-               " # Panics",
-               "",
-               " This function does not explicitly panic but relies on the behavior of the called burn contract.",
-               " If the called burn contract reverts or fails, this function will propagate the error.",
-               "",
-               " # Notes",
-               "",
-               " * The function uses `ink::selector_bytes` to determine the function signature for the `burn_contract`.",
-               " * Updates to the `BurnPortfolio` are persisted to storage.",
-               ""
+               " Returns `Ok` with the updated portfolio on success."
             ],
             "label": "burn",
             "mutates": true,
@@ -278,7 +263,7 @@ export const main = {
                   "ink",
                   "MessageResult"
                ],
-               "type": 13
+               "type": 15
             },
             "selector": "0x50cb7e6b"
          },
@@ -320,7 +305,7 @@ export const main = {
                   "ink",
                   "MessageResult"
                ],
-               "type": 16
+               "type": 17
             },
             "selector": "0x57b8a8a7"
          },
@@ -336,7 +321,7 @@ export const main = {
                   "ink",
                   "MessageResult"
                ],
-               "type": 17
+               "type": 18
             },
             "selector": "0x717d96e0"
          },
@@ -362,7 +347,7 @@ export const main = {
                   "ink",
                   "MessageResult"
                ],
-               "type": 18
+               "type": 19
             },
             "selector": "0xf3246265"
          }
@@ -706,6 +691,48 @@ export const main = {
          "id": 10,
          "type": {
             "def": {
+               "variant": {
+                  "variants": [
+                     {
+                        "fields": [
+                           {
+                              "type": 11
+                           }
+                        ],
+                        "index": 0,
+                        "name": "Ok"
+                     },
+                     {
+                        "fields": [
+                           {
+                              "type": 14
+                           }
+                        ],
+                        "index": 1,
+                        "name": "Err"
+                     }
+                  ]
+               }
+            },
+            "params": [
+               {
+                  "name": "T",
+                  "type": 11
+               },
+               {
+                  "name": "E",
+                  "type": 14
+               }
+            ],
+            "path": [
+               "Result"
+            ]
+         }
+      },
+      {
+         "id": 11,
+         "type": {
+            "def": {
                "composite": {
                   "fields": [
                      {
@@ -725,12 +752,12 @@ export const main = {
                      },
                      {
                         "name": "last_withdrawal",
-                        "type": 11,
+                        "type": 12,
                         "typeName": "Option<ActionRecord>"
                      },
                      {
                         "name": "last_burn",
-                        "type": 12,
+                        "type": 13,
                         "typeName": "ActionRecord"
                      }
                   ]
@@ -743,7 +770,7 @@ export const main = {
          }
       },
       {
-         "id": 11,
+         "id": 12,
          "type": {
             "def": {
                "variant": {
@@ -755,7 +782,7 @@ export const main = {
                      {
                         "fields": [
                            {
-                              "type": 12
+                              "type": 13
                            }
                         ],
                         "index": 1,
@@ -767,7 +794,7 @@ export const main = {
             "params": [
                {
                   "name": "T",
-                  "type": 12
+                  "type": 13
                }
             ],
             "path": [
@@ -776,7 +803,7 @@ export const main = {
          }
       },
       {
-         "id": 12,
+         "id": 13,
          "type": {
             "def": {
                "composite": {
@@ -801,91 +828,7 @@ export const main = {
          }
       },
       {
-         "id": 13,
-         "type": {
-            "def": {
-               "variant": {
-                  "variants": [
-                     {
-                        "fields": [
-                           {
-                              "type": 14
-                           }
-                        ],
-                        "index": 0,
-                        "name": "Ok"
-                     },
-                     {
-                        "fields": [
-                           {
-                              "type": 8
-                           }
-                        ],
-                        "index": 1,
-                        "name": "Err"
-                     }
-                  ]
-               }
-            },
-            "params": [
-               {
-                  "name": "T",
-                  "type": 14
-               },
-               {
-                  "name": "E",
-                  "type": 8
-               }
-            ],
-            "path": [
-               "Result"
-            ]
-         }
-      },
-      {
          "id": 14,
-         "type": {
-            "def": {
-               "variant": {
-                  "variants": [
-                     {
-                        "fields": [
-                           {
-                              "type": 7
-                           }
-                        ],
-                        "index": 0,
-                        "name": "Ok"
-                     },
-                     {
-                        "fields": [
-                           {
-                              "type": 15
-                           }
-                        ],
-                        "index": 1,
-                        "name": "Err"
-                     }
-                  ]
-               }
-            },
-            "params": [
-               {
-                  "name": "T",
-                  "type": 7
-               },
-               {
-                  "name": "E",
-                  "type": 15
-               }
-            ],
-            "path": [
-               "Result"
-            ]
-         }
-      },
-      {
-         "id": 15,
          "type": {
             "def": {
                "variant": {
@@ -933,6 +876,14 @@ export const main = {
                      {
                         "index": 10,
                         "name": "BurnContractAlreadyAdded"
+                     },
+                     {
+                        "index": 11,
+                        "name": "CrossContractCallFailed"
+                     },
+                     {
+                        "index": 12,
+                        "name": "WithdrawalNotAllowed"
                      }
                   ]
                }
@@ -944,7 +895,91 @@ export const main = {
          }
       },
       {
+         "id": 15,
+         "type": {
+            "def": {
+               "variant": {
+                  "variants": [
+                     {
+                        "fields": [
+                           {
+                              "type": 16
+                           }
+                        ],
+                        "index": 0,
+                        "name": "Ok"
+                     },
+                     {
+                        "fields": [
+                           {
+                              "type": 8
+                           }
+                        ],
+                        "index": 1,
+                        "name": "Err"
+                     }
+                  ]
+               }
+            },
+            "params": [
+               {
+                  "name": "T",
+                  "type": 16
+               },
+               {
+                  "name": "E",
+                  "type": 8
+               }
+            ],
+            "path": [
+               "Result"
+            ]
+         }
+      },
+      {
          "id": 16,
+         "type": {
+            "def": {
+               "variant": {
+                  "variants": [
+                     {
+                        "fields": [
+                           {
+                              "type": 7
+                           }
+                        ],
+                        "index": 0,
+                        "name": "Ok"
+                     },
+                     {
+                        "fields": [
+                           {
+                              "type": 14
+                           }
+                        ],
+                        "index": 1,
+                        "name": "Err"
+                     }
+                  ]
+               }
+            },
+            "params": [
+               {
+                  "name": "T",
+                  "type": 7
+               },
+               {
+                  "name": "E",
+                  "type": 14
+               }
+            ],
+            "path": [
+               "Result"
+            ]
+         }
+      },
+      {
+         "id": 17,
          "type": {
             "def": {
                "variant": {
@@ -986,7 +1021,7 @@ export const main = {
          }
       },
       {
-         "id": 17,
+         "id": 18,
          "type": {
             "def": {
                "variant": {
@@ -1028,7 +1063,7 @@ export const main = {
          }
       },
       {
-         "id": 18,
+         "id": 19,
          "type": {
             "def": {
                "variant": {
@@ -1036,7 +1071,7 @@ export const main = {
                      {
                         "fields": [
                            {
-                              "type": 19
+                              "type": 20
                            }
                         ],
                         "index": 0,
@@ -1057,7 +1092,7 @@ export const main = {
             "params": [
                {
                   "name": "T",
-                  "type": 19
+                  "type": 20
                },
                {
                   "name": "E",
@@ -1070,7 +1105,7 @@ export const main = {
          }
       },
       {
-         "id": 19,
+         "id": 20,
          "type": {
             "def": {
                "variant": {
@@ -1082,7 +1117,7 @@ export const main = {
                      {
                         "fields": [
                            {
-                              "type": 10
+                              "type": 11
                            }
                         ],
                         "index": 1,
@@ -1094,7 +1129,7 @@ export const main = {
             "params": [
                {
                   "name": "T",
-                  "type": 10
+                  "type": 11
                }
             ],
             "path": [
@@ -1103,7 +1138,7 @@ export const main = {
          }
       },
       {
-         "id": 20,
+         "id": 21,
          "type": {
             "def": {
                "composite": {
@@ -1123,7 +1158,7 @@ export const main = {
          }
       },
       {
-         "id": 21,
+         "id": 22,
          "type": {
             "def": {
                "primitive": "u32"
@@ -1131,15 +1166,14 @@ export const main = {
          }
       },
       {
-         "id": 22,
+         "id": 23,
          "type": {
             "def": {
                "variant": {}
             },
             "path": [
-               "ink_env",
-               "types",
-               "NoChainExtension"
+               "d9_chain_extension",
+               "D9ChainExtension"
             ]
          }
       }
