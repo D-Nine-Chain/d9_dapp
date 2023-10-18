@@ -14,46 +14,46 @@
 
 <div id="portfolio">
 	<div class="data">
-		<h3>燃烧量 (Burn Amount):</h3>
-		<p id="burn-amount">{toHumanNumber(burnPortfolio.amountBurned)}</p>
+		<h3>🔥 烧毁代币</h3>
+		<h2 id="burn-amount">{toHumanNumber(burnPortfolio.amountBurned)}</h2>
 		<!-- Placeholder, update this with actual data -->
 	</div>
 
 	<div class="data">
-		<h3>余额到期 (Balance Due):</h3>
-		<p id="balance-due">{toHumanNumber(burnPortfolio.balanceDue)}</p>
+		<h3>🧧 余额到期</h3>
+		<h2 id="balance-due">{toHumanNumber(burnPortfolio.balanceDue)}</h2>
 		<!-- Placeholder, update this with actual data -->
 	</div>
 
 	<div class="data">
-		<h3>已付余额 (Balance Paid):</h3>
-		<p id="balance-paid">{toHumanNumber(burnPortfolio.balancePaid)}</p>
+		<h3>🏦 已付余额</h3>
+		<h2 id="balance-paid">{toHumanNumber(burnPortfolio.balancePaid)}</h2>
 		<!-- Placeholder, update this with actual data -->
 	</div>
 
 	<div class="data">
-		<h3>最后燃烧时间 (Last Burn Time):</h3>
+		<h3>⏳最后燃烧时间</h3>
 		<Time relative timestamp={burnPortfolio.lastBurn.time} />
-		<p id="last-burn-time">{new Date(burnPortfolio.lastBurn.time).toLocaleString()}</p>
+		<h2 id="last-burn-time">{new Date(burnPortfolio.lastBurn.time).toLocaleString()}</h2>
 		<!-- Placeholder, update this with actual data -->
 	</div>
 
 	<div class="data">
-		<h3>最后燃烧合同 (Last Burn Contract):</h3>
+		<h3>🤖 最后燃烧合同</h3>
 		<p id="last-burn-contract">{burnPortfolio.lastBurn.contract}</p>
 		<!-- Placeholder, update this with actual data -->
 	</div>
 
 	<div class="data">
-		<h3>最后一次提款 (Last Withdrawal):</h3>
+		<h3>最后一次提款</h3>
 
-		<p id="last-withdrawal">
+		<h3 id="last-withdrawal">
 			{#if !burnPortfolio.lastWithdrawal}
 				没有
 			{:else}
 				<Time relative timestamp={burnPortfolio.lastWithdrawal.time} />
 			{/if}
-		</p>
+		</h3>
 		<!-- Placeholder, update this with actual data -->
 	</div>
 </div>
@@ -62,13 +62,25 @@
 	#portfolio {
 		display: flex;
 		flex-direction: column;
+		background-color: white;
+		border-radius: 6px;
+		box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+		padding: 32px;
 	}
 	.data {
 		display: flex;
-		flex-direction: row;
-		align-items: center;
+		flex-direction: column;
 	}
 	.data > h3 {
-		color: blue;
+		color: rgb(50, 69, 91);
+		margin: 0;
+		padding: 0;
+	}
+	.data > h2 {
+		color: rgb(72, 72, 77);
+		margin: 0;
+		padding: 0;
+		font-size: 1.8em;
+		padding-bottom: 18px;
 	}
 </style>
