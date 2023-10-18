@@ -33,8 +33,8 @@ export async function getTotalBurned() {
       gasLimit: await getReadGasLimit(),
       storageDepositLimit: STORAGE_DEPOSIT_LIMIT
    });
-   console.log(output.toHuman())
-   totalBurnedStore.set(parseInt(output.toHuman().Ok))
+   console.log(output.toJSON())
+   totalBurnedStore.set(output.toJSON().ok)
 }
 
 

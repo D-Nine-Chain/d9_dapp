@@ -3,7 +3,7 @@
 	import { accountStore } from '$lib/stores/accountStore';
 	import { totalBurnedStore } from '$lib/stores/totalBurnedStore';
 	import NoAccountModal from '$lib/components/NoAccountModal.svelte';
-	import { checkForExtension, getAccounts } from '$lib/utils';
+	import { checkForExtension, getAccounts, toHumanNumber } from '$lib/utils';
 	import { web3FromAddress } from '@polkadot/extension-dapp';
 	import { updateData } from '$lib/rpc';
 	let showNoAccountModal: boolean = true;
@@ -28,8 +28,8 @@
 		if (extensions.length > 0) {
 			showNoAccountModal = false;
 		}
-		totalBurned = $totalBurnedStore;
 	}
+	$: totalBurned = $totalBurnedStore;
 </script>
 
 <div id="home">
@@ -52,7 +52,7 @@
 		</div>
 		<div id="total-burned">
 			<h3>燃烧总量。</h3>
-			<p>{totalBurned}</p>
+			<p>{toHumanNumber(totalBurned)}</p>
 		</div>
 	</div>
 
