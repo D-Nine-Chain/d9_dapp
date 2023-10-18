@@ -1,14 +1,14 @@
 import { writable } from 'svelte/store';
 export const burnPortfolioStore = writable({
-   amountBurned: "",
-   balanceDue: "",
-   balancePaid: "",
+   amountBurned: 0,
+   balanceDue: 0,
+   balancePaid: 0,
    lastBurn: {
-      time: "",
+      time: 0,
       contract: ''
    },
    lastWithdrawal: {
-      time: "",
+      time: 0,
       contract: ''
    }
 })

@@ -3,7 +3,8 @@
 	import { getParent, getAncestors } from '$lib/rpc';
 	import { accountStore } from '$lib/stores/accountStore';
 	import BurnPortfolio from '$lib/components/BurnPortfolio.svelte';
-	import { burn, withdraw } from '$lib/burn';
+	import { burn, dryBurn, withdraw } from '$lib/burn';
+	import { burnPortfolioStore } from '$lib/stores/burnPortfolioStore';
 	let ancestry: any[] = [];
 	let parent: any;
 	accountStore.subscribe(async (userAccount) => {
@@ -16,13 +17,18 @@
 		const outcome = await withdraw();
 		console.log(outcome);
 	}
+	$: burnPortfolio = $burnPortfolioStore;
 	let burnAmount: number = 200;
 </script>
 
 <div id="home">
 	<div id="left">
 		<div>父母的地址:{parent}</div>
-		<BurnPortfolio />
+		{#if burnPortfolio.amountBurned > 0}
+			<BurnPortfolio />
+		{:else}
+			<p>还没有开始燃烧</p>
+		{/if}
 		<div id="functions">
 			<div>
 				<input bind:value={burnAmount} placeholder="enter burn amount" />
@@ -38,6 +44,12 @@
 						await withdraw();
 					}}><h2>提取</h2></button
 				>
+				<!-- <button
+					id="withdraw-button"
+					on:click={async () => {
+						await dryBurn(burnAmount);
+					}}><h2>dry burn</h2></button
+				> -->
 			</div>
 			<div />
 		</div>

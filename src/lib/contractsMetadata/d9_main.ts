@@ -1,10 +1,10 @@
-export const main = {
+export const mainABI = {
    "source": {
-      "hash": "0xb2e4c317d322495f67ff38f0e8a31a5bec3da8d1e8def691a5a47c5d319b3322",
+      "hash": "0x42830af4dda8766d3137ce8616b77c3c70dc58955f7f813027ddce4308893896",
       "language": "ink! 4.3.0",
       "compiler": "rustc 1.72.0",
       "build_info": {
-         "build_mode": "Release",
+         "build_mode": "Debug",
          "cargo_contract_version": "3.2.0",
          "rust_toolchain": "stable-aarch64-apple-darwin",
          "wasm_opt_settings": {
