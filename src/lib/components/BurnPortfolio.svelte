@@ -38,11 +38,10 @@
 		<!-- Placeholder, update this with actual data -->
 	</div>
 
-	<div class="data">
+	<!-- <div class="data">
 		<h3>🤖 最后燃烧合同</h3>
 		<p id="last-burn-contract">{burnPortfolio.lastBurn.contract}</p>
-		<!-- Placeholder, update this with actual data -->
-	</div>
+	</div> -->
 
 	<div class="data">
 		<h3>最后一次提款</h3>
@@ -51,7 +50,7 @@
 			{#if !burnPortfolio.lastWithdrawal}
 				没有
 			{:else}
-				<Time relative timestamp={burnPortfolio.lastWithdrawal.time} />
+				<Time timestamp={burnPortfolio.lastWithdrawal.time} relative />
 			{/if}
 		</h3>
 		<!-- Placeholder, update this with actual data -->
@@ -61,17 +60,21 @@
 <style>
 	#portfolio {
 		display: flex;
-		flex-direction: column;
+		flex-direction: row;
+		justify-content: space-between;
 		background-color: white;
 		border-radius: 6px;
 		box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 		padding: 32px;
+		width: 85%;
+		margin: 0 auto;
 	}
 	.data {
 		display: flex;
 		flex-direction: column;
 	}
 	.data > h3 {
+		font-size: 0.7em;
 		color: rgb(50, 69, 91);
 		margin: 0;
 		padding: 0;
@@ -80,7 +83,7 @@
 		color: rgb(72, 72, 77);
 		margin: 0;
 		padding: 0;
-		font-size: 1.8em;
+		font-size: 1.1em;
 		padding-bottom: 18px;
 	}
 </style>

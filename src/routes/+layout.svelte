@@ -6,6 +6,7 @@
 	import { checkForExtension, getAccounts, toHumanNumber } from '$lib/utils';
 	import { web3FromAddress } from '@polkadot/extension-dapp';
 	import { getParent, updateData } from '$lib/rpc';
+	import BurnPortfolio from '$lib/components/BurnPortfolio.svelte';
 	let showNoAccountModal: boolean = true;
 	let extensions: any[] = [];
 	let account: any;
@@ -63,6 +64,7 @@
 			<h2>燃烧总量 {toHumanNumber(totalBurned)}</h2>
 		</div>
 	</div>
+	<BurnPortfolio />
 	<div id="content">
 		<slot />
 	</div>
