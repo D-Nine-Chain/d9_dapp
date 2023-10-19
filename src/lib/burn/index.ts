@@ -27,6 +27,7 @@ export async function getBurnPortfolio() {
 }
 
 export async function getTotalBurned() {
+   console.log("total burned called")
    const main = await getMainContract();
    const account = get(accountStore);
    const { output } = await main.query.getTotalBurned(account.address, {

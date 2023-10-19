@@ -21,7 +21,7 @@
 			const injector = await web3FromAddress(account.address);
 			account.signer = injector.signer;
 			accountStore.set(account);
-			updateData();
+			await updateData();
 		}
 
 		console.log(account);

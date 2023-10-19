@@ -15,7 +15,7 @@ export async function getAncestors(account: string) {
 }
 
 export async function updateData() {
-   console.log("dating updating")
+   console.log("updating data")
    await getBurnPortfolio();
    await getTotalBurned();
 }

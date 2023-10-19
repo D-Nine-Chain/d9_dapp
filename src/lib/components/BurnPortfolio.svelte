@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { getBurnPortfolio } from '$lib/burn';
 	import Time from 'svelte-time';
-
 	import { burnPortfolioStore } from '$lib/stores/burnPortfolioStore';
 	import { onMount } from 'svelte';
 	import { toHumanNumber } from '$lib/utils';
