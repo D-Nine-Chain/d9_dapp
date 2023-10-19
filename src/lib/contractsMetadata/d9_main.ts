@@ -1,10 +1,10 @@
 export const mainABI = {
    "source": {
-      "hash": "0x42830af4dda8766d3137ce8616b77c3c70dc58955f7f813027ddce4308893896",
+      "hash": "0x96f7b26f80e8ce7b57e62e5de98abd51dca74fcd91f333213eb8bd6136ca3711",
       "language": "ink! 4.3.0",
       "compiler": "rustc 1.72.0",
       "build_info": {
-         "build_mode": "Debug",
+         "build_mode": "Release",
          "cargo_contract_version": "3.2.0",
          "rust_toolchain": "stable-aarch64-apple-darwin",
          "wasm_opt_settings": {
@@ -77,19 +77,19 @@ export const mainABI = {
             "displayName": [
                "BlockNumber"
             ],
-            "type": 22
+            "type": 24
          },
          "chainExtension": {
             "displayName": [
                "ChainExtension"
             ],
-            "type": 23
+            "type": 25
          },
          "hash": {
             "displayName": [
                "Hash"
             ],
-            "type": 21
+            "type": 23
          },
          "maxEventTopics": 4,
          "timestamp": {
@@ -244,6 +244,32 @@ export const mainABI = {
          {
             "args": [
                {
+                  "label": "account_id",
+                  "type": {
+                     "displayName": [
+                        "AccountId"
+                     ],
+                     "type": 0
+                  }
+               }
+            ],
+            "default": false,
+            "docs": [],
+            "label": "get_ancestors",
+            "mutates": false,
+            "payable": false,
+            "returnType": {
+               "displayName": [
+                  "ink",
+                  "MessageResult"
+               ],
+               "type": 15
+            },
+            "selector": "0xe2ee2364"
+         },
+         {
+            "args": [
+               {
                   "label": "burn_contract",
                   "type": {
                      "displayName": [
@@ -263,7 +289,7 @@ export const mainABI = {
                   "ink",
                   "MessageResult"
                ],
-               "type": 15
+               "type": 17
             },
             "selector": "0x50cb7e6b"
          },
@@ -305,7 +331,7 @@ export const mainABI = {
                   "ink",
                   "MessageResult"
                ],
-               "type": 17
+               "type": 19
             },
             "selector": "0x57b8a8a7"
          },
@@ -321,7 +347,7 @@ export const mainABI = {
                   "ink",
                   "MessageResult"
                ],
-               "type": 18
+               "type": 20
             },
             "selector": "0x717d96e0"
          },
@@ -347,7 +373,7 @@ export const mainABI = {
                   "ink",
                   "MessageResult"
                ],
-               "type": 19
+               "type": 21
             },
             "selector": "0xf3246265"
          }
@@ -884,6 +910,14 @@ export const mainABI = {
                      {
                         "index": 12,
                         "name": "WithdrawalNotAllowed"
+                     },
+                     {
+                        "index": 13,
+                        "name": "RuntimeErrorGettingAncestors"
+                     },
+                     {
+                        "index": 14,
+                        "name": "NoAncestorsFound"
                      }
                   ]
                }
@@ -943,6 +977,81 @@ export const mainABI = {
                "variant": {
                   "variants": [
                      {
+                        "index": 0,
+                        "name": "None"
+                     },
+                     {
+                        "fields": [
+                           {
+                              "type": 3
+                           }
+                        ],
+                        "index": 1,
+                        "name": "Some"
+                     }
+                  ]
+               }
+            },
+            "params": [
+               {
+                  "name": "T",
+                  "type": 3
+               }
+            ],
+            "path": [
+               "Option"
+            ]
+         }
+      },
+      {
+         "id": 17,
+         "type": {
+            "def": {
+               "variant": {
+                  "variants": [
+                     {
+                        "fields": [
+                           {
+                              "type": 18
+                           }
+                        ],
+                        "index": 0,
+                        "name": "Ok"
+                     },
+                     {
+                        "fields": [
+                           {
+                              "type": 8
+                           }
+                        ],
+                        "index": 1,
+                        "name": "Err"
+                     }
+                  ]
+               }
+            },
+            "params": [
+               {
+                  "name": "T",
+                  "type": 18
+               },
+               {
+                  "name": "E",
+                  "type": 8
+               }
+            ],
+            "path": [
+               "Result"
+            ]
+         }
+      },
+      {
+         "id": 18,
+         "type": {
+            "def": {
+               "variant": {
+                  "variants": [
+                     {
                         "fields": [
                            {
                               "type": 7
@@ -979,7 +1088,7 @@ export const mainABI = {
          }
       },
       {
-         "id": 17,
+         "id": 19,
          "type": {
             "def": {
                "variant": {
@@ -1021,7 +1130,7 @@ export const mainABI = {
          }
       },
       {
-         "id": 18,
+         "id": 20,
          "type": {
             "def": {
                "variant": {
@@ -1063,7 +1172,7 @@ export const mainABI = {
          }
       },
       {
-         "id": 19,
+         "id": 21,
          "type": {
             "def": {
                "variant": {
@@ -1071,7 +1180,7 @@ export const mainABI = {
                      {
                         "fields": [
                            {
-                              "type": 20
+                              "type": 22
                            }
                         ],
                         "index": 0,
@@ -1092,7 +1201,7 @@ export const mainABI = {
             "params": [
                {
                   "name": "T",
-                  "type": 20
+                  "type": 22
                },
                {
                   "name": "E",
@@ -1105,7 +1214,7 @@ export const mainABI = {
          }
       },
       {
-         "id": 20,
+         "id": 22,
          "type": {
             "def": {
                "variant": {
@@ -1138,7 +1247,7 @@ export const mainABI = {
          }
       },
       {
-         "id": 21,
+         "id": 23,
          "type": {
             "def": {
                "composite": {
@@ -1158,7 +1267,7 @@ export const mainABI = {
          }
       },
       {
-         "id": 22,
+         "id": 24,
          "type": {
             "def": {
                "primitive": "u32"
@@ -1166,7 +1275,7 @@ export const mainABI = {
          }
       },
       {
-         "id": 23,
+         "id": 25,
          "type": {
             "def": {
                "variant": {}
