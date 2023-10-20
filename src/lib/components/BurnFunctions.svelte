@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { burn, dryBurn, withdraw } from '$lib/burn';
+	import { burn, dryBurn, withdraw } from '$lib/contracts/burn';
 	let burnAmount: number = 200;
 </script>
 

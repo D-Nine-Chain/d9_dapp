@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getBurnPortfolio } from '$lib/burn';
+	import { getBurnPortfolio } from '$lib/contracts/burn';
 	import Time from 'svelte-time';
 	import { burnPortfolioStore } from '$lib/stores/burnPortfolioStore';
 	import { onMount } from 'svelte';

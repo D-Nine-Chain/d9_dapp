@@ -1,6 +1,6 @@
 
 import { getAPI } from "./polkadot"
-import { getBurnPortfolio, getTotalBurned } from '$lib/burn';
+import { getBurnPortfolio, getTotalBurned } from '$lib/contracts/burn';
 
 // customTypes.d.ts
 export async function getParent(account: string) {

@@ -1,10 +1,10 @@
 <script lang="ts">
 	import Ancestor from '$lib/components/Ancestor.svelte';
-	import { getParent, getAncestors } from '$lib/rpc';
+	import { getAncestors } from '$lib/rpc';
 	import { accountStore } from '$lib/stores/accountStore';
-	import BurnPortfolio from '$lib/components/BurnPortfolio.svelte';
 	import BurnFunctions from '$lib/components/BurnFunctions.svelte';
 	import { burnPortfolioStore } from '$lib/stores/burnPortfolioStore';
+	import MerchantAccount from '$lib/components/MerchantAccount.svelte';
 	let ancestry: any[] = [];
 
 	accountStore.subscribe(async (userAccount) => {
@@ -25,7 +25,9 @@
 			{/each}
 		</div>
 	</div>
-	<div id="right" />
+	<div id="right">
+		<MerchantAccount />
+	</div>
 </div>
 
 <BurnFunctions />
