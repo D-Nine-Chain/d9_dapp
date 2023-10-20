@@ -6,7 +6,7 @@ import { merchantAccountStore } from '$lib/stores/merchantAccountStore';
 
 import { BN, hexToBn } from '@polkadot/util';
 import { toBigNumber } from '$lib/utils';
-import { merchantAccountExpiryStore } from '$lib/stores/merchantAccountExpirystore';
+import { merchantAccountExpiryStore } from '$lib/stores/merchantAccountExpiryStore';
 
 export async function getMerchantAccount() {
    const account = get(accountStore);
