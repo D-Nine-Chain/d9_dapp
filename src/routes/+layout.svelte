@@ -7,10 +7,17 @@
 	import { web3FromAddress } from '@polkadot/extension-dapp';
 	import { getParent, updateData } from '$lib/rpc';
 	import BurnPortfolio from '$lib/components/BurnPortfolio.svelte';
+	import { getUSDTPrice } from '$lib/contracts/amm';
+	import { goto } from '$app/navigation';
+	import { get } from 'svelte/store';
+	import { getUSDTBalance } from '$lib/contracts/usdt';
+	import { usdtBalanceStore } from '$lib/stores/usdtBalanceStore';
 	let showNoAccountModal: boolean = true;
 	let extensions: any[] = [];
 	let account: any;
 	let parent: any;
+	let usdtPrice: number;
+	let usdtBalance: number;
 	onMount(async () => {
 		extensions = await checkForExtension();
 		const accounts = await getAccounts();
@@ -23,8 +30,9 @@
 			accountStore.set(account);
 			await updateData();
 		}
-
-		console.log(account);
+		usdtPrice = await getUSDTPrice();
+		usdtBalance = (await getUSDTBalance()) ?? 0;
+		console.log('usdtPrice', usdtPrice);
 	});
 	let totalBurned: any;
 	$: {
@@ -33,6 +41,7 @@
 		}
 	}
 	$: totalBurned = $totalBurnedStore;
+	$: usdtBalance = $usdtBalanceStore;
 </script>
 
 <div id="home">
@@ -60,8 +69,17 @@
 				</div>
 			</div>
 		</div>
-		<div id="total-burned">
-			<h2>燃烧总量 {toHumanNumber(totalBurned)}</h2>
+		<div id="top-right-container">
+			<div class="top-right-holder">
+				<h2>燃烧总量 {toHumanNumber(totalBurned)}</h2>
+			</div>
+			<div class="top-right-holder">
+				<h2>USDT: {usdtBalance}</h2>
+			</div>
+			<div>
+				<button id="account-management" on:click={() => goto('/')}>帐户管理</button>
+				<button id="exchange-button" on:click={() => goto('/amm')}>去交易</button>
+			</div>
 		</div>
 	</div>
 	<BurnPortfolio />
@@ -78,6 +96,15 @@
 	:global(body) {
 		background: #ebebeb;
 		font-family: sans-serif;
+	}
+	:global(button) {
+		display: inline-block;
+		box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+		border-radius: 6px;
+		font-weight: 500;
+		font-size: 1.1em;
+		padding: 12px 32px;
+		border: 0;
 	}
 	* {
 		box-sizing: border-box;
@@ -124,8 +151,13 @@
 		text-overflow: ellipsis;
 		width: 300px;
 	}
+	#top-right-container {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+	}
 
-	#total-burned {
+	.top-right-holder {
 		display: flex;
 		flex-direction: row;
 		align-items: center;
@@ -138,16 +170,8 @@
 		width: auto;
 		padding: 0px 24px;
 	}
-	#total-burned > h2 {
-		display: block;
-	}
-	#content {
-		margin-top: 70px;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		width: 95%;
-		margin-left: auto;
-		margin-right: auto;
+	#exchange-button {
+		background-color: rgb(29, 102, 158);
+		color: white;
 	}
 </style>

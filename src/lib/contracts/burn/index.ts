@@ -1,17 +1,17 @@
 import { PUBLIC_BURN_CONTRACT } from '$env/static/public';
 import { accountStore } from '$lib/stores/accountStore';
-import { STORAGE_DEPOSIT_LIMIT, getAPI, getGasLimit, getMainContract, getReadGasLimit } from '$lib/rpc/polkadot';
+import { STORAGE_DEPOSIT_LIMIT, getAPI, getGasLimit, getReadGasLimit } from '$lib/rpc/polkadot';
 import { get } from 'svelte/store';
 import { burnPortfolioStore } from '$lib/stores/burnPortfolioStore';
 
 import { totalBurnedStore } from '$lib/stores/totalBurnedStore';
 import { updateData } from '$lib/rpc';
-import { BN } from '@polkadot/util';
-import { toBigNumber } from '$lib/utils';
+import { toBigNumberD9 } from '$lib/utils';
+import { getContract } from '..';
 
 export async function getBurnPortfolio() {
    const account = get(accountStore);
-   const main = await getMainContract();
+   const main = await getContract("main");
    const { result, output } = await main.query.getPortfolio(account.address, {
       gasLimit: await getReadGasLimit(),
       storageDepositLimit: STORAGE_DEPOSIT_LIMIT
@@ -28,7 +28,7 @@ export async function getBurnPortfolio() {
 
 export async function getTotalBurned() {
    console.log("total burned called")
-   const main = await getMainContract();
+   const main = await getContract("main");
    const account = get(accountStore);
    const { output } = await main.query.getTotalBurned(account.address, {
       gasLimit: await getReadGasLimit(),
@@ -41,7 +41,7 @@ export async function getTotalBurned() {
 
 export async function burn(burnAmount: number) {
    const account = get(accountStore);
-   const main = await getMainContract();
+   const main = await getContract("main");
    const api = await getAPI();
    if (!account?.signer) { return };
 
@@ -49,7 +49,7 @@ export async function burn(burnAmount: number) {
    return await main.tx.burn({
       gasLimit: await getGasLimit(),
       storageDepositLimit: STORAGE_DEPOSIT_LIMIT,
-      value: toBigNumber(burnAmount)
+      value: toBigNumberD9(burnAmount)
    }, PUBLIC_BURN_CONTRACT)
       .signAndSend(account?.address, { signer: account?.signer }, async (result) => {
          if (result.status.isInBlock) {
@@ -77,7 +77,7 @@ export async function burn(burnAmount: number) {
 export async function dryBurn(burnAmount: number) {
 
    const account = get(accountStore);
-   const main = await getMainContract();
+   const main = await getContract("main");
    const api = await getAPI();
    if (!account?.signer) { return };
 
@@ -85,7 +85,7 @@ export async function dryBurn(burnAmount: number) {
    const { result, output, gasRequired } = await main.query.burn(account.address, {
       gasLimit: await getReadGasLimit(),
       storageDepositLimit: STORAGE_DEPOSIT_LIMIT,
-      value: toBigNumber(burnAmount)
+      value: toBigNumberD9(burnAmount)
    }, PUBLIC_BURN_CONTRACT)
    console.log("check")
    console.log(output.toHuman())
@@ -95,7 +95,7 @@ export async function dryBurn(burnAmount: number) {
 
 export async function withdraw() {
    const account = get(accountStore);
-   const main = await getMainContract();
+   const main = await getContract("main");
    if (!account?.signer) { return };
    return await main.tx.withdraw({
       gasLimit: await getGasLimit(),

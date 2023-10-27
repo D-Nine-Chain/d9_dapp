@@ -10,8 +10,12 @@ export async function getAccounts() {
    return allAccounts;
 }
 
-export function toBigNumber(number: number | string) {
-   const numberString = new BN(number).mul(new BN(1000000000000)).toString()
+export function toBigNumberD9(number: number | string) {
+   const numberString = new BN(number).mul(new BN(10).pow(new BN(12))).toString()
+   return numberString
+}
+export function toBigNumberUSDT(number: number | string) {
+   const numberString = new BN(number).mul(new BN(10).pow(new BN(9))).toString()
    return numberString
 }
 

@@ -1,16 +1,17 @@
 import { PUBLIC_MERCHANT_CONTRACT } from '$env/static/public';
 import { accountStore } from '$lib/stores/accountStore';
-import { STORAGE_DEPOSIT_LIMIT, getGasLimit, getMerchantContract, getReadGasLimit } from '$lib/rpc/polkadot';
+import { STORAGE_DEPOSIT_LIMIT, getGasLimit, getReadGasLimit } from '$lib/rpc/polkadot';
 import { get } from 'svelte/store';
 import { merchantAccountStore } from '$lib/stores/merchantAccountStore';
-
+import { contracts, getContract } from '$lib/contracts';
 import { BN, hexToBn } from '@polkadot/util';
-import { toBigNumber } from '$lib/utils';
+import { toBigNumberD9 } from '$lib/utils';
 import { merchantAccountExpiryStore } from '$lib/stores/merchantAccountExpiryStore';
 
 export async function getMerchantAccount() {
    const account = get(accountStore);
-   const merchant = await getMerchantContract();
+   const merchant = await getContract("merchant");
+   console.log("merchant", merchant)
    const { result, output } = await merchant.query.getAccount(account.address, {
       gasLimit: await getReadGasLimit(),
       storageDepositLimit: STORAGE_DEPOSIT_LIMIT
@@ -27,7 +28,7 @@ export async function getMerchantAccount() {
 }
 
 export async function getMerchantAccountExpiry() {
-   const merchant = await getMerchantContract();
+   const merchant = await getContract("merchant");
    const account = get(accountStore);
    const { output } = await merchant.query.getExpiry(account.address, {
       gasLimit: await getReadGasLimit(),
@@ -44,7 +45,7 @@ export async function getMerchantAccountExpiry() {
 
 export async function d9Subscribe() {
    const account = get(accountStore);
-   const merchant = await getMerchantContract();
+   const merchant = await getContract("merchant");
    if (!account?.signer) { return };
 
    return await merchant.tx.d9Subscribe({
@@ -52,7 +53,7 @@ export async function d9Subscribe() {
       storageDepositLimit: STORAGE_DEPOSIT_LIMIT,
       value: 10_000_000_000_000
    })
-      .signAndSend(account?.address, { signer: account?.signer }, async (result) => {
+      .signAndSend(account?.address, { signer: account?.signer }, async (result: any) => {
          if (result.status.isInBlock) {
             console.log(`Transaction included in block: ${result.status.asInBlock}`);
             await getMerchantAccountExpiry();
@@ -68,7 +69,7 @@ export async function d9Subscribe() {
 
          // Check for dispatch error
          if (result.dispatchError) {
-            result.events.forEach((e) => {
+            result.events.forEach((e: any) => {
                console.log(e)
             })
             console.error('Transaction failed with dispatch error:', result.dispatchError.toHuman());
@@ -78,13 +79,13 @@ export async function d9Subscribe() {
 
 export async function giveGreenPoints(address: string, amount: number) {
    const account = get(accountStore);
-   const merchant = await getMerchantContract();
+   const merchant = await getContract("merchant");
    if (!account?.signer) { return };
    return await merchant.tx.giveGreenPoints({
       gasLimit: await getGasLimit(),
       storageDepositLimit: STORAGE_DEPOSIT_LIMIT,
-      value: toBigNumber(amount)
-   }, address).signAndSend(account?.address, { signer: account?.signer }, async (result) => {
+      value: toBigNumberD9(amount)
+   }, address).signAndSend(account?.address, { signer: account?.signer }, async (result: any) => {
       if (result.status.isInBlock) {
          console.log(`Transaction included in block: ${result.status.asInBlock}`);
          await getMerchantAccount();
@@ -100,7 +101,7 @@ export async function giveGreenPoints(address: string, amount: number) {
 
       // Check for dispatch error
       if (result.dispatchError) {
-         result.events.forEach((e) => {
+         result.events.forEach((e: any) => {
             console.log(e)
          })
          console.error('Transaction failed with dispatch error:', result.dispatchError.toHuman());
@@ -110,12 +111,12 @@ export async function giveGreenPoints(address: string, amount: number) {
 
 export async function redeemD9(amount: number) {
    const account = get(accountStore);
-   const merchant = await getMerchantContract();
+   const merchant = await getContract("merchant");
    if (!account?.signer) { return };
    return await merchant.tx.redeemD9({
       gasLimit: await getGasLimit(),
       storageDepositLimit: STORAGE_DEPOSIT_LIMIT,
-   }, PUBLIC_MERCHANT_CONTRACT).signAndSend(account?.address, { signer: account?.signer }, async (result) => {
+   }, PUBLIC_MERCHANT_CONTRACT).signAndSend(account?.address, { signer: account?.signer }, async (result: any) => {
       if (result.status.isInBlock) {
          console.log(`Transaction included in block: ${result.status.asInBlock}`);
          await getMerchantAccount();
@@ -131,7 +132,7 @@ export async function redeemD9(amount: number) {
 
       // Check for dispatch error
       if (result.dispatchError) {
-         result.events.forEach((e) => {
+         result.events.forEach((e: any) => {
             console.log(e)
          })
          console.error('Transaction failed with dispatch error:', result.dispatchError.toHuman());
