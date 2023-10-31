@@ -2,16 +2,25 @@
 	import { accountStore } from '$lib/store';
 	import type { Account } from '$lib/types/types';
 	import { formatNumber } from '$lib/utils';
+	import { onMount } from 'svelte';
+	import { get } from 'svelte/store';
 
 	let account: Account;
-	$: account = $accountStore;
+
+	onMount(async () => {
+		account = get(accountStore);
+	});
 </script>
 
+{#if !account}
+	<h2>加载内容</h2>
+{/if}
 {#if account}
-	<div id="name-container">
-		<h2>{account.meta.name}</h2>
-	</div>
-
+	{#if account.meta}
+		<div id="name-container">
+			<h2>{account.meta.name}</h2>
+		</div>
+	{/if}
 	<div id="account" class=" ">
 		<h2>地址</h2>
 		<div class="info-row color shape shadow">
@@ -19,14 +28,16 @@
 		</div>
 
 		<div class="info-row">
-			<div class=" color shape shadow balance">
-				<h2>D9余额</h2>
-				<span>{formatNumber(account.d9Balances.free)}</span>
-			</div>
-			<div class=" color shape shadow balance">
-				<h2>USDT余额</h2>
-				<span>{formatNumber(account.usdtBalance)}</span>
-			</div>
+			{#if account.d9Balances}
+				<div class=" color shape shadow balance">
+					<h2>D9余额</h2>
+					<span>{formatNumber(account.d9Balances.free)}</span>
+				</div>
+				<div class=" color shape shadow balance">
+					<h2>USDT余额</h2>
+					<span>{formatNumber(account.usdtBalance)}</span>
+				</div>
+			{/if}
 		</div>
 	</div>
 {/if}
