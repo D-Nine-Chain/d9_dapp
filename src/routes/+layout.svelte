@@ -6,7 +6,6 @@
 	import { goto } from '$app/navigation';
 	import type { TransactionNotification } from '$lib/types/types';
 	import { TransactionStatus } from '$lib/utils';
-	import { NotificationDisplay, notifier } from '@beyonk/svelte-notifications';
 	let showNoAccountModal: boolean = true;
 	let extensions: any[] = [];
 	let transactionColor: string = '';
@@ -72,7 +71,6 @@
 				id="account-management"
 				class:selected-button={$page.url.pathname === '/'}
 				on:click={() => {
-					notifier.success('works', 1000);
 					goto('/');
 				}}>帐户管理</button
 			>
