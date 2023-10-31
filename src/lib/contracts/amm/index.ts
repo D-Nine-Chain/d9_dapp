@@ -1,18 +1,14 @@
-import { PUBLIC_AMM_CONTRACT } from '$env/static/public';
-import { accountStore } from '$lib/stores/accountStore';
-import { STORAGE_DEPOSIT_LIMIT, getGasLimit, getReadGasLimit } from '$lib/rpc/polkadot';
+import { accountStore, liquidityProviderStore, currencyReservesStore } from '$lib/store';
+import { STORAGE_DEPOSIT_LIMIT, getGasLimit, getReadGasLimit } from '$lib/chain/polkadot';
 import { get } from 'svelte/store';
-import { merchantAccountStore } from '$lib/stores/merchantAccountStore';
 
-import { BN, hexToBn } from '@polkadot/util';
-import { toBigNumberD9 } from '$lib/utils';
-import { merchantAccountExpiryStore } from '$lib/stores/merchantAccountExpiryStore';
+import { BN } from '@polkadot/util';
+import { Currency, reduceByCurrencyDecimal, toBigNumberString } from '$lib/utils';
 import { contracts, getContract } from '..';
-import { liquidityProviderStore } from '$lib/stores/liquidityProviderStore';
-import { currencyReservesStore } from '$lib/stores/currencyReservesStore';
 import { updateUSDTBalance } from '../usdt';
+import type { Account } from '$lib/types/types';
 
-export async function getLiquidityProvider() {
+export async function updateLiquidityProvider() {
    const account = get(accountStore);
    const amm = await contracts.amm;
    const { result, output } = await amm.query.getLiquidityProvider(account.address, {
@@ -39,9 +35,10 @@ export async function getCurrencyReserves() {
    });
 
    if (result.isOk) {
-      let okOutput = output.toJSON().ok
-      let d9 = new BN(okOutput[0]).div(new BN(10).pow(new BN(12))).toNumber()
-      let usdt = new BN(okOutput[1]).div(new BN(10).pow(new BN(9))).toNumber()
+      let okOutput = output.toPrimitive().ok
+      console.log("currency reserves output", okOutput)
+      let d9 = reduceByCurrencyDecimal(okOutput[0], Currency.D9);
+      let usdt = reduceByCurrencyDecimal(okOutput[1], Currency.USDT);
       let currencyReserves = { d9, usdt }
       console.log(currencyReserves)
       if (okOutput) {
@@ -58,7 +55,7 @@ export async function getUSDTPrice() {
 }
 
 
-export async function getUSDT(d9Amount: number) {
+export async function purchaseUSDT(d9Amount: number) {
    const account = get(accountStore);
    const amm = await getContract("amm");
    if (!account?.signer) { return };
@@ -66,7 +63,7 @@ export async function getUSDT(d9Amount: number) {
    return await amm.tx.getUsdt({
       gasLimit: await getGasLimit(),
       storageDepositLimit: STORAGE_DEPOSIT_LIMIT,
-      value: toBigNumberD9(d9Amount)
+      value: toBigNumberString(d9Amount, Currency.D9)
    })
       .signAndSend(account?.address, { signer: account?.signer }, async (result) => {
          if (result.status.isInBlock) {
@@ -92,120 +89,37 @@ export async function getUSDT(d9Amount: number) {
       });
 }
 
-// export async function getMerchantAccountExpiry() {
-//    const merchant = await getMerchantContract();
-//    const account = get(accountStore);
-//    const { output } = await merchant.query.getExpiry(account.address, {
-//       gasLimit: await getReadGasLimit(),
-//       storageDepositLimit: STORAGE_DEPOSIT_LIMIT
-//    }, account.address);
-//    let data = output.toJSON().ok
-//    if (data.err) {
-//       merchantAccountExpiryStore.set(0)
-//    } else {
-//       merchantAccountExpiryStore.set(data.ok)
-//    }
-// }
 
+export async function addLiquidity(account: Account, d9Amount: number, usdtAmount: number) {
 
-// export async function d9Subscribe() {
-//    const account = get(accountStore);
-//    const merchant = await getMerchantContract();
-//    if (!account?.signer) { return };
+   const amm = await getContract("amm");
+   if (!account?.signer) { return };
 
-//    return await merchant.tx.d9Subscribe({
-//       gasLimit: await getGasLimit(),
-//       storageDepositLimit: STORAGE_DEPOSIT_LIMIT,
-//       value: 10_000_000_000_000
-//    })
-//       .signAndSend(account?.address, { signer: account?.signer }, async (result) => {
-//          if (result.status.isInBlock) {
-//             console.log(`Transaction included in block: ${result.status.asInBlock}`);
-//             await getMerchantAccountExpiry();
-//          } else if (result.status.isFinalized) {
-//             console.log(`Transaction finalized in block: ${result.status.asFinalized}`);
-//          } else if (result.status.isBroadcast) {
-//             console.log('Transaction has been broadcasted');
-//          } else if (result.status.isReady) {
-//             console.log('Transaction is ready');
-//          } else if (result.status.isFuture) {
-//             console.log('Transaction is scheduled for a future block');
-//          }
+   return await amm.tx.addLiquidity({
+      gasLimit: await getGasLimit(),
+      storageDepositLimit: STORAGE_DEPOSIT_LIMIT,
+      value: toBigNumberString(d9Amount, Currency.D9)
+   }, toBigNumberString(usdtAmount, Currency.USDT))
+      .signAndSend(account?.address, { signer: account?.signer }, async (result) => {
+         if (result.status.isInBlock) {
+            console.log(`Transaction included in block: ${result.status.asInBlock}`);
+         } else if (result.status.isFinalized) {
+            console.log(`Transaction finalized in block: ${result.status.asFinalized}`);
+         } else if (result.status.isBroadcast) {
+            console.log('Transaction has been broadcasted');
+         } else if (result.status.isReady) {
+            console.log('Transaction is ready');
+         } else if (result.status.isFuture) {
+            console.log('Transaction is scheduled for a future block');
+         }
 
-//          // Check for dispatch error
-//          if (result.dispatchError) {
-//             result.events.forEach((e) => {
-//                console.log(e)
-//             })
-//             console.error('Transaction failed with dispatch error:', result.dispatchError.toHuman());
-//          }
-//       });
-// }
+         // Check for dispatch error
+         if (result.dispatchError) {
+            result.events.forEach((e) => {
+               console.log(e)
+            })
+            console.error('Transaction failed with dispatch error:', result.dispatchError.toHuman());
+         }
+      });
+}
 
-// export async function giveGreenPoints(address: string, amount: number) {
-//    const account = get(accountStore);
-//    const merchant = await getMerchantContract();
-//    if (!account?.signer) { return };
-//    return await merchant.tx.giveGreenPoints({
-//       gasLimit: await getGasLimit(),
-//       storageDepositLimit: STORAGE_DEPOSIT_LIMIT,
-//       value: toBigNumber(amount)
-//    }, address).signAndSend(account?.address, { signer: account?.signer }, async (result) => {
-//       if (result.status.isInBlock) {
-//          console.log(`Transaction included in block: ${result.status.asInBlock}`);
-//          await getMerchantAccount();
-//       } else if (result.status.isFinalized) {
-//          console.log(`Transaction finalized in block: ${result.status.asFinalized}`);
-//       } else if (result.status.isBroadcast) {
-//          console.log('Transaction has been broadcasted');
-//       } else if (result.status.isReady) {
-//          console.log('Transaction is ready');
-//       } else if (result.status.isFuture) {
-//          console.log('Transaction is scheduled for a future block');
-//       }
-
-//       // Check for dispatch error
-//       if (result.dispatchError) {
-//          result.events.forEach((e) => {
-//             console.log(e)
-//          })
-//          console.error('Transaction failed with dispatch error:', result.dispatchError.toHuman());
-//       }
-//    });
-// }
-
-// export async function redeemD9(amount: number) {
-//    const account = get(accountStore);
-//    const merchant = await getMerchantContract();
-//    if (!account?.signer) { return };
-//    return await merchant.tx.redeemD9({
-//       gasLimit: await getGasLimit(),
-//       storageDepositLimit: STORAGE_DEPOSIT_LIMIT,
-//    }, PUBLIC_MERCHANT_CONTRACT).signAndSend(account?.address, { signer: account?.signer }, async (result) => {
-//       if (result.status.isInBlock) {
-//          console.log(`Transaction included in block: ${result.status.asInBlock}`);
-//          await getMerchantAccount();
-//       } else if (result.status.isFinalized) {
-//          console.log(`Transaction finalized in block: ${result.status.asFinalized}`);
-//       } else if (result.status.isBroadcast) {
-//          console.log('Transaction has been broadcasted');
-//       } else if (result.status.isReady) {
-//          console.log('Transaction is ready');
-//       } else if (result.status.isFuture) {
-//          console.log('Transaction is scheduled for a future block');
-//       }
-
-//       // Check for dispatch error
-//       if (result.dispatchError) {
-//          result.events.forEach((e) => {
-//             console.log(e)
-//          })
-//          console.error('Transaction failed with dispatch error:', result.dispatchError.toHuman());
-//       }
-//    });
-// }
-
-// export async function updateMerchantData() {
-//    await getMerchantAccount();
-//    await getMerchantAccountExpiry();
-// }

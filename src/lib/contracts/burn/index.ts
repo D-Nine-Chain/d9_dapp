@@ -1,26 +1,26 @@
 import { PUBLIC_BURN_CONTRACT } from '$env/static/public';
-import { accountStore } from '$lib/stores/accountStore';
-import { STORAGE_DEPOSIT_LIMIT, getAPI, getGasLimit, getReadGasLimit } from '$lib/rpc/polkadot';
+import { accountStore, totalBurnedStore, burnPortfolioStore } from '$lib/store';
+import { STORAGE_DEPOSIT_LIMIT, getAPI, getGasLimit, getReadGasLimit } from '$lib/chain/polkadot';
 import { get } from 'svelte/store';
-import { burnPortfolioStore } from '$lib/stores/burnPortfolioStore';
-
-import { totalBurnedStore } from '$lib/stores/totalBurnedStore';
-import { updateData } from '$lib/rpc';
-import { toBigNumberD9 } from '$lib/utils';
+import { updateBurnData } from '$lib/chain';
+import { Currency, reduceByCurrencyDecimal, toBigNumberString } from '$lib/utils';
 import { getContract } from '..';
 
-export async function getBurnPortfolio() {
-   const account = get(accountStore);
+export async function getBurnPortfolio(address: string) {
    const main = await getContract("main");
-   const { result, output } = await main.query.getPortfolio(account.address, {
+   console.log("address in get burn portfolio function call is ", address)
+   const { result, output } = await main.query.getPortfolio(address, {
       gasLimit: await getReadGasLimit(),
       storageDepositLimit: STORAGE_DEPOSIT_LIMIT
-   }, account.address);
+   }, address);
 
    if (result.isOk) {
       let burnPortfolio = output.toJSON().ok
       console.log(burnPortfolio)
       if (burnPortfolio) {
+         burnPortfolio.amountBurned = reduceByCurrencyDecimal(burnPortfolio.amountBurned, Currency.D9);
+         burnPortfolio.balanceDue = reduceByCurrencyDecimal(burnPortfolio.balanceDue, Currency.D9);
+         burnPortfolio.balancePaid = reduceByCurrencyDecimal(burnPortfolio.balancePaid, Currency.D9);
          burnPortfolioStore.set(burnPortfolio)
       }
    }
@@ -34,11 +34,30 @@ export async function getTotalBurned() {
       gasLimit: await getReadGasLimit(),
       storageDepositLimit: STORAGE_DEPOSIT_LIMIT
    });
-   console.log(output.toJSON())
-   totalBurnedStore.set(output.toJSON().ok)
+   console.log("total burned", output.toJSON())
+   totalBurnedStore.set(reduceByCurrencyDecimal(output.toJSON().ok, Currency.D9))
 }
 
+export function getReturnPercent() {
+   let totalBurned = get(totalBurnedStore);
+   let firstThresholdAmount = 200_000_000; // Reduced by 10^12
+   let percentage = 0.008;
 
+   if (totalBurned <= firstThresholdAmount) {
+      return percentage;
+   }
+
+   let excessAmount = totalBurned - firstThresholdAmount;
+   let reductions = Math.floor(excessAmount / 100_000_000) + 1; // Reduced by 10^12
+
+   for (let i = 0; i < reductions; i++) {
+      percentage /= 2;
+   }
+
+   return percentage;
+
+
+}
 export async function burn(burnAmount: number) {
    const account = get(accountStore);
    const main = await getContract("main");
@@ -49,12 +68,12 @@ export async function burn(burnAmount: number) {
    return await main.tx.burn({
       gasLimit: await getGasLimit(),
       storageDepositLimit: STORAGE_DEPOSIT_LIMIT,
-      value: toBigNumberD9(burnAmount)
+      value: toBigNumberString(burnAmount, Currency.D9)
    }, PUBLIC_BURN_CONTRACT)
       .signAndSend(account?.address, { signer: account?.signer }, async (result) => {
          if (result.status.isInBlock) {
             console.log(`Transaction included in block: ${result.status.asInBlock}`);
-            await updateData();
+            await updateBurnData(account.address);
          } else if (result.status.isFinalized) {
             console.log(`Transaction finalized in block: ${result.status.asFinalized}`);
          } else if (result.status.isBroadcast) {
@@ -85,7 +104,7 @@ export async function dryBurn(burnAmount: number) {
    const { result, output, gasRequired } = await main.query.burn(account.address, {
       gasLimit: await getReadGasLimit(),
       storageDepositLimit: STORAGE_DEPOSIT_LIMIT,
-      value: toBigNumberD9(burnAmount)
+      value: toBigNumberString(burnAmount, Currency.D9)
    }, PUBLIC_BURN_CONTRACT)
    console.log("check")
    console.log(output.toHuman())
@@ -103,7 +122,7 @@ export async function withdraw() {
    }, PUBLIC_BURN_CONTRACT).signAndSend(account?.address, { signer: account?.signer }, async (result) => {
       if (result.status.isInBlock) {
          console.log(`Transaction included in block: ${result.status.asInBlock}`);
-         await updateData();
+         await updateBurnData(account.address);
       } else if (result.status.isFinalized) {
          console.log(`Transaction finalized in block: ${result.status.asFinalized}`);
       } else if (result.status.isBroadcast) {

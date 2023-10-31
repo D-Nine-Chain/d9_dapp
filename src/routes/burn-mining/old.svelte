@@ -5,6 +5,7 @@
 	import { onMount } from 'svelte';
 	import { Currency, reduceByCurrencyDecimal } from '$lib/utils';
 	import type { BurnPortfolio } from '$lib/types/types';
+	import BurnFunctions from '$lib/components/BurnFunctions.svelte';
 	export let address: string;
 	$: burnPortfolio = $burnPortfolioStore;
 	onMount(async () => {
@@ -13,7 +14,7 @@
 	});
 </script>
 
-<div id="portfolio">
+<div id="portfolio" class="shadow color shape">
 	<div class="data">
 		<h3>🔥 烧毁代币</h3>
 		<h2 id="burn-amount">{reduceByCurrencyDecimal(burnPortfolio.amountBurned, Currency.D9)}</h2>
@@ -43,7 +44,7 @@
 		<h3>🤖 最后燃烧合同</h3>
 		<p id="last-burn-contract">{burnPortfolio.lastBurn.contract}</p>
 	</div> -->
-
+	<!-- <BurnFunctions /> -->
 	<div class="data">
 		<h3>最后一次提款</h3>
 
@@ -61,16 +62,18 @@
 <style>
 	#portfolio {
 		display: flex;
-		flex-direction: row;
+		flex-direction: column;
 		justify-content: space-between;
 		/* border-radius: 6px; */
 		padding: 32px;
 		width: 85%;
 		margin: 0 auto;
+		margin-top: 24px;
+		border-radius: 20px;
 	}
 	.data {
 		display: flex;
-		flex-direction: column;
+		flex-direction: row;
 	}
 	.data > h3 {
 		font-size: 0.7em;

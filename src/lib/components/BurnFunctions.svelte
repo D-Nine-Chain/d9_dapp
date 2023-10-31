@@ -3,7 +3,7 @@
 	let burnAmount: number = 200;
 </script>
 
-<div id="functions">
+<div id="functions" class="shadow color-and-shape">
 	<input bind:value={burnAmount} placeholder="enter burn amount" style="display:block" />
 	<button
 		id="burn-button"
@@ -35,11 +35,9 @@
 		border-radius: 6px;
 		height: 80px;
 		border-radius: 6px;
-		box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 		gap: 8px;
 		margin: 0 auto;
 		/* ... other styles ... */
-		background-color: white;
 	}
 	input {
 		width: auto;

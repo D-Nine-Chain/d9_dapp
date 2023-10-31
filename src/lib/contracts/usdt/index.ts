@@ -1,10 +1,10 @@
-import { accountStore } from '$lib/stores/accountStore';
-import { STORAGE_DEPOSIT_LIMIT, getGasLimit, getReadGasLimit } from '$lib/rpc/polkadot';
+import { accountStore, usdtBalanceStore } from '$lib/store';
+import { STORAGE_DEPOSIT_LIMIT, getReadGasLimit } from '$lib/chain/polkadot';
 import { get } from 'svelte/store';
 
 import { BN } from '@polkadot/util';
 import { getContract } from '..';
-import { usdtBalanceStore } from '$lib/stores/usdtBalanceStore';
+import { Currency, reduceByCurrencyDecimal } from '$lib/utils';
 
 export async function getUSDTBalance() {
    const account = get(accountStore);
@@ -13,13 +13,16 @@ export async function getUSDTBalance() {
       gasLimit: await getReadGasLimit(),
       storageDepositLimit: STORAGE_DEPOSIT_LIMIT
    }, account.address);
-   return new BN(output.toJSON().ok).div(new BN(10).pow(new BN(9))).toNumber()
+   return reduceByCurrencyDecimal(output.toJSON().ok, Currency.USDT)
 }
 
 export async function updateUSDTBalance() {
    console.log("usdt balance updated")
    let usdtBalance = await getUSDTBalance();
-   usdtBalanceStore.set(usdtBalance)
+   accountStore.update((account) => {
+      account.usdtBalance = usdtBalance
+      return account
+   })
 }
 
 

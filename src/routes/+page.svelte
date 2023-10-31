@@ -1,81 +1,77 @@
 <script lang="ts">
-	import Ancestor from '$lib/components/Ancestor.svelte';
-	import { getAncestors } from '$lib/rpc';
-	import { accountStore } from '$lib/stores/accountStore';
-	import BurnFunctions from '$lib/components/BurnFunctions.svelte';
-	import { burnPortfolioStore } from '$lib/stores/burnPortfolioStore';
-	import MerchantAccount from '$lib/components/MerchantAccount.svelte';
-	let ancestry: any[] = [];
+	import { accountStore } from '$lib/store';
+	import type { Account } from '$lib/types/types';
+	import { formatNumber } from '$lib/utils';
 
-	accountStore.subscribe(async (userAccount) => {
-		if (userAccount.address) {
-			ancestry = await getAncestors(userAccount.address);
-		}
-	});
-
-	$: burnPortfolio = $burnPortfolioStore;
+	let account: Account;
+	$: account = $accountStore;
 </script>
 
-<div id="home">
-	<div id="left">
-		<div id="ancestor-title"><h2>祖先</h2></div>
-		<div id="ancestry">
-			{#each ancestry as ancestor}
-				<Ancestor {ancestor} />
-			{/each}
+{#if account}
+	<div id="name-container">
+		<h2>{account.meta.name}</h2>
+	</div>
+
+	<div id="account" class=" ">
+		<h2>地址</h2>
+		<div class="info-row color shape shadow">
+			<span>{account.address}</span>
+		</div>
+
+		<div class="info-row">
+			<div class=" color shape shadow balance">
+				<h2>D9余额</h2>
+				<span>{formatNumber(account.d9Balances.free)}</span>
+			</div>
+			<div class=" color shape shadow balance">
+				<h2>USDT余额</h2>
+				<span>{formatNumber(account.usdtBalance)}</span>
+			</div>
 		</div>
 	</div>
-	<div id="right">
-		<MerchantAccount />
-	</div>
-</div>
-
-<BurnFunctions />
+{/if}
 
 <style>
-	#home {
-		display: flex;
-		flex-direction: row;
-		height: 400px;
-		width: 100%;
-		gap: 10px;
-		align-items: center;
-		background-color: white;
-		border-radius: 6px;
-		box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
-		margin-bottom: 24px;
-		margin-top: 24px;
+	h2 {
+		font-weight: 500;
 	}
-	#ancestor-title {
+	#name-container {
 		display: flex;
 		flex-direction: row;
-		justify-content: flex-start;
 		align-items: center;
-		width: 100%;
-		height: 50px;
-		margin-bottom: 24px;
+		justify-content: flex-start;
+		width: 95%;
+		max-width: 600px;
+	}
+	#account {
+		width: 95%;
+		max-width: 600px;
+		padding-left: 24px;
+		display: flex;
+		flex-direction: column;
+		gap: 24px;
+	}
+	.info-row {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+		width: 95%;
+		max-width: 500px;
 		padding-left: 32px;
-		padding-top: 12px;
+		padding-right: 32px;
 	}
-	#left {
+	.balance {
 		display: flex;
 		flex-direction: column;
-		justify-content: flex-start;
-		align-items: center;
-		height: 100%;
+		flex-grow: 0;
 	}
-	#right {
-		display: flex;
-		flex-direction: column;
-		height: 100%;
-		width: 500px;
+	.balance > span {
+		color: var(--green);
+		font-size: 1.9rem;
 	}
-	#ancestry {
-		display: flex;
-		flex-direction: column;
-		height: 100%;
-		align-items: center;
-		overflow-x: hidden;
-		overflow-y: auto;
+	.balance > h2 {
+		font-size: 1.1rem;
+		color: black;
 	}
 </style>

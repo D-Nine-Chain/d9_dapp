@@ -1,14 +1,13 @@
 <script lang="ts">
 	import {
 		d9Subscribe,
-		getMerchantAccount,
+		updateMerchantAccount,
 		getMerchantAccountExpiry,
 		giveGreenPoints
 	} from '$lib/contracts/merchant';
 	import { onMount } from 'svelte';
-	import { merchantAccountStore } from '$lib/stores/merchantAccountStore';
-	import { merchantAccountExpiryStore } from '$lib/stores/merchantAccountExpiryStore';
-	import { toHumanNumber } from '$lib/utils';
+	import { merchantAccountStore, merchantAccountExpiryStore } from '$lib/store';
+	import { Currency, reduceByCurrencyDecimal } from '$lib/utils';
 	let merchantAccount: any;
 	let greenAmount: number = 100;
 	let greenAddress: string = '';
@@ -23,7 +22,7 @@
 		} else {
 			console.log('merchant account is expired');
 		}
-		await getMerchantAccount();
+		await updateMerchantAccount();
 	});
 	$: merchantAccount = $merchantAccountStore;
 	$: expiry = $merchantAccountExpiryStore;
@@ -45,7 +44,7 @@
 	<div id="merchant-info">
 		<div class="merchant-info-row">
 			<p>🟢 : {merchantAccount.greenPoints}</p>
-			<p>d9已兑换: {toHumanNumber(merchantAccount.redeemedD9)}</p>
+			<p>d9已兑换: {reduceByCurrencyDecimal(merchantAccount.redeemedD9, Currency.D9)}</p>
 		</div>
 	</div>
 	<div id="button-container">
@@ -132,17 +131,5 @@
 		align-items: center;
 		justify-content: space-between;
 		width: 80%;
-	}
-	.gray-button {
-		background-color: rgb(35, 66, 146);
-		color: white;
-		pointer-events: none; /* Prevents any click on the button */
-		cursor: not-allowed; /* Shows a 'not allowed' cursor when you hover over it */
-		opacity: 0.6; /* Makes the button semi-transparent to show it's disabled */
-		background-color: #d3d3d3; /* A generic gray background color */
-		border: none; /* Removes the border */
-		padding: 10px 20px; /* Provides some padding */
-		font-size: 16px; /* Sets the font size */
-		border-radius: 4px;
 	}
 </style>
