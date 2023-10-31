@@ -44,3 +44,10 @@ export type MerchantAccount = {
    //locale date string
    expiry: string;
 }
+
+export type TransactionNotification = {
+   action: string;
+   status: TransactionStatus
+
+}
+

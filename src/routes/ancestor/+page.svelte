@@ -14,10 +14,12 @@
 	<h3>完整的祖先列表</h3>
 	<div id="ancestors" class="shadow color shape">
 		{#if account}
-			{#if account.ancestors.length > 0}
-				{#each account.ancestors as ancestor}
-					<Ancestor {ancestor} />
-				{/each}
+			{#if account.ancestors}
+				{#if account.ancestors.length > 0}
+					{#each account.ancestors as ancestor}
+						<Ancestor {ancestor} />
+					{/each}
+				{/if}
 			{/if}
 		{/if}
 	</div>

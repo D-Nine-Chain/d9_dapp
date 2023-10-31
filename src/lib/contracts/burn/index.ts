@@ -1,11 +1,11 @@
 import { PUBLIC_BURN_CONTRACT } from '$env/static/public';
-import { accountStore, totalBurnedStore, burnPortfolioStore } from '$lib/store';
+import { accountStore, totalBurnedStore, burnPortfolioStore, transactionInfoStore } from '$lib/store';
 import { STORAGE_DEPOSIT_LIMIT, getAPI, getGasLimit, getReadGasLimit } from '$lib/chain/polkadot';
 import { get } from 'svelte/store';
 import { updateBurnData } from '$lib/chain';
-import { Currency, reduceByCurrencyDecimal, toBigNumberString } from '$lib/utils';
+import { Currency, reduceByCurrencyDecimal, toBigNumberString, updateTransactionInfo } from '$lib/utils';
 import { getContract } from '..';
-
+import { TransactionStatus } from '$lib/utils';
 export async function getBurnPortfolio(address: string) {
    const main = await getContract("main");
    console.log("address in get burn portfolio function call is ", address)
@@ -62,6 +62,7 @@ export async function burn(burnAmount: number) {
    const account = get(accountStore);
    const main = await getContract("main");
    const api = await getAPI();
+
    if (!account?.signer) { return };
 
    console.log("constants", api.consts)
@@ -72,9 +73,14 @@ export async function burn(burnAmount: number) {
    }, PUBLIC_BURN_CONTRACT)
       .signAndSend(account?.address, { signer: account?.signer }, async (result) => {
          if (result.status.isInBlock) {
+            transactionInfoStore.set({
+               status: TransactionStatus.InBlock,
+               action: 'burn'
+            });
             console.log(`Transaction included in block: ${result.status.asInBlock}`);
          } else if (result.status.isFinalized) {
             await updateBurnData(account.address);
+            updateTransactionInfo("burn", TransactionStatus.Finalized)
             console.log(`Transaction finalized in block: ${result.status.asFinalized}`);
          } else if (result.status.isBroadcast) {
             console.log('Transaction has been broadcasted');
@@ -86,6 +92,7 @@ export async function burn(burnAmount: number) {
 
          // Check for dispatch error
          if (result.dispatchError) {
+            updateTransactionInfo("burn", TransactionStatus.Error)
             result.events.forEach((e) => {
                console.log(e)
             })

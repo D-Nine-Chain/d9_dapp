@@ -4,10 +4,17 @@
 	import { page } from '$app/stores';
 	import { checkForBrowserExtension, getAccountsFromBrowser, prepAccount } from '$lib/chain';
 	import { goto } from '$app/navigation';
-	import { accountStore, totalBurnedStore } from '$lib/store';
+	import type { TransactionNotification } from '$lib/types/types';
+	import { TransactionStatus } from '$lib/utils';
+	import { NotificationDisplay, notifier } from '@beyonk/svelte-notifications';
 	let showNoAccountModal: boolean = true;
 	let extensions: any[] = [];
-
+	let transactionColor: string = '';
+	let transactionNotification: TransactionNotification = {
+		action: 'burn',
+		status: TransactionStatus.Finalized
+	};
+	let n;
 	onMount(async () => {
 		extensions = await checkForBrowserExtension();
 		const accounts = extensions.length > 0 ? await getAccountsFromBrowser() : [];
@@ -17,16 +24,44 @@
 			await prepAccount(accounts[0]);
 		}
 	});
+	function displayNotification(notification: TransactionNotification) {
+		let status: string;
+		let type: string;
+		// Here we determine the message based on the notification status
+		switch (notification.status) {
+			case TransactionStatus.Broadcast:
+				status = '正在广播';
+				type = 'warning';
+				break;
+			case TransactionStatus.InBlock:
+				status = '在区块中';
+				type = 'warning';
+				break;
+			case TransactionStatus.Finalized:
+				status = '已完成';
+				type = 'success';
+				break;
+			case TransactionStatus.Error:
+				status = '出现错误';
+				type = 'error';
+				break;
+			default:
+				status = '未知状态';
+				type = 'warning';
+		}
 
+		// Assuming addNotification is a function that takes an object with a text and position property
+	}
 	$: {
 		if (extensions.length > 0) {
 			showNoAccountModal = false;
 		}
 	}
-	$: account = $accountStore;
-	$: totalBurned = $totalBurnedStore;
+
+	// $: transactionUpdate = $transactionInfoStore;
 	$: {
-		console.log($page.url.pathname);
+		if (transactionNotification) {
+		}
 	}
 </script>
 
@@ -37,6 +72,7 @@
 				id="account-management"
 				class:selected-button={$page.url.pathname === '/'}
 				on:click={() => {
+					notifier.success('works', 1000);
 					goto('/');
 				}}>帐户管理</button
 			>
@@ -168,20 +204,7 @@
 		justify-content: space-between;
 		align-items: flex-start;
 	}
-	#account-data {
-		width: 400px;
-	}
-	#your-account {
-		display: flex;
-		flex-direction: column;
-		border: 0;
-		border-radius: 6px;
-		box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
-		background-color: white;
-		width: 100%;
-		padding-left: 40px;
-		margin-bottom: 15px;
-	}
+
 	#navigation {
 		display: flex;
 		flex-direction: row;
@@ -190,44 +213,6 @@
 		gap: 18px;
 		background-color: white;
 		width: 100%;
-	}
-	.account-info {
-		display: flex;
-		flex-direction: column;
-		border: 0;
-		border-radius: 6px;
-		box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
-		background-color: white;
-		width: 100%;
-		padding-left: 24px;
-		margin-bottom: 15px;
-		padding-top: 8px;
-		padding-bottom: 8px;
-	}
-	.account-info > p {
-		overflow: hidden;
-		white-space: nowrap;
-		text-overflow: ellipsis;
-		width: 300px;
-	}
-	#top-right-container {
-		display: flex;
-		flex-direction: column;
-		gap: 10px;
-	}
-
-	.top-right-holder {
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-		background-color: white;
-		border: 0;
-		height: auto;
-		border-radius: 6px;
-		box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
-		background-color: white;
-		width: auto;
-		padding: 0px 24px;
 	}
 
 	#content {
@@ -242,5 +227,22 @@
 		background-color: var(--primary-color);
 		color: white;
 		border-radius: 0;
+	}
+	#transaction-update {
+		display: flex;
+		flex-direction: column;
+		position: fixed; /* Fixed position */
+		bottom: 0; /* Locked to the bottom */
+		left: 0; /* Aligned to the left side */
+		width: 100%; /* Full width */
+		padding: 10px; /* Some padding, adjust as needed */
+		box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+		color: white;
+	}
+	.is-error {
+		background-color: var(--red);
+	}
+	.is-good {
+		background-color: var(--green);
 	}
 </style>

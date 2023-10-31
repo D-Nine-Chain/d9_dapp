@@ -4,6 +4,7 @@
  * misc things to help throughout the UI such number formating, etc
  */
 
+import { transactionInfoStore } from '$lib/store';
 import { BN, hexToU8a, isHex, isU8a } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 /**
@@ -15,6 +16,12 @@ export enum Currency {
    D9 = "D9",
    USDT = "USDT",
    GREEN_POINTS = "GREEN_POINTS"
+}
+export enum TransactionStatus {
+   Broadcast,
+   InBlock,
+   Finalized,
+   Error,
 }
 /**
  * @description defines the decimals for each currency
@@ -61,4 +68,16 @@ export function isValidAddress(address: string): boolean {
    } catch (error) {
       return false;
    }
+}
+
+export function updateTransactionInfo(action: string, status: TransactionStatus) {
+
+   transactionInfoStore.update((info) => {
+      if (info) {
+         info.status = status;
+         info.action = action;
+      }
+
+      return info;
+   })
 }

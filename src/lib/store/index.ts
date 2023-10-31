@@ -3,7 +3,7 @@
  * 
  * defines all the data that is meant to be shared between components
 */
-import type { Account, BurnPortfolio, LiquidityProvider, MerchantAccount } from '$lib/types/types';
+import type { TransactionNotification, Account, BurnPortfolio, LiquidityProvider, MerchantAccount } from '$lib/types/types';
 import { writable } from 'svelte/store';
 
 export const merchantAccountStore = writable<MerchantAccount>({
@@ -67,5 +67,6 @@ export const userStore = writable({
    lastBurnAmount: 0,
 })
 
-export const transactionStatus = writable({});
+export const transactionInfoStore = writable<TransactionNotification | null>(null);
+
 export const d9BalanceStore = writable({ free: 0, reserved: 0, frozen: 0 });

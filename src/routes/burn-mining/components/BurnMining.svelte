@@ -11,6 +11,9 @@
 	onMount(async () => {});
 
 	function calculateDividends() {
+		if (burnPortfolio.amountBurned == 0 || totalNetworkBurn == 0) {
+			return 0;
+		}
 		let percent = (burnPortfolio.amountBurned / totalNetworkBurn) * 100;
 		return percent.toFixed(4);
 	}
@@ -36,7 +39,7 @@
 	</div>
 </div>
 <dialog bind:this={burnDialog}>
-	<BurnDialog />
+	<BurnDialog dialog={burnDialog} />
 </dialog>
 
 <style>

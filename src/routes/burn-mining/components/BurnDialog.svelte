@@ -1,6 +1,10 @@
 <script lang="ts">
 	import { burn } from '$lib/contracts/burn';
+	import { transactionInfoStore } from '$lib/store';
+	import type { TransactionNotification } from '$lib/types/types';
 	let burnAmount: number;
+	export let dialog: any;
+	let transactionInfo: TransactionNotification | null = null;
 </script>
 
 <div id="burn-dialog">
@@ -9,6 +13,7 @@
 		<button
 			id="burn-button"
 			on:click={async () => {
+				dialog.close();
 				await burn(burnAmount);
 			}}>烧</button
 		>
