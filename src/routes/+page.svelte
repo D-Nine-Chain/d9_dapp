@@ -2,14 +2,10 @@
 	import { accountStore } from '$lib/store';
 	import type { Account } from '$lib/types/types';
 	import { formatNumber } from '$lib/utils';
-	import { onMount } from 'svelte';
-	import { get } from 'svelte/store';
 
 	let account: Account;
 
-	onMount(async () => {
-		account = get(accountStore);
-	});
+	$: account = $accountStore;
 </script>
 
 {#if !account}

@@ -73,8 +73,8 @@ export async function burn(burnAmount: number) {
       .signAndSend(account?.address, { signer: account?.signer }, async (result) => {
          if (result.status.isInBlock) {
             console.log(`Transaction included in block: ${result.status.asInBlock}`);
-            await updateBurnData(account.address);
          } else if (result.status.isFinalized) {
+            await updateBurnData(account.address);
             console.log(`Transaction finalized in block: ${result.status.asFinalized}`);
          } else if (result.status.isBroadcast) {
             console.log('Transaction has been broadcasted');

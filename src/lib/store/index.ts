@@ -67,4 +67,5 @@ export const userStore = writable({
    lastBurnAmount: 0,
 })
 
+export const transactionStatus = writable({});
 export const d9BalanceStore = writable({ free: 0, reserved: 0, frozen: 0 });

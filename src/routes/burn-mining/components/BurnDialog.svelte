@@ -4,7 +4,6 @@
 </script>
 
 <div id="burn-dialog">
-	<div>This is amazingly simple! (press esc to close)</div>
 	<input bind:value={burnAmount} type="number" placeholder="你想烧多少" />
 	<div id="button-container">
 		<button
