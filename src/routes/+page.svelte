@@ -29,6 +29,8 @@
 					<h2>D9余额</h2>
 					<span>{formatNumber(account.d9Balances.free)}</span>
 				</div>
+			{/if}
+			{#if account.usdtBalance}
 				<div class=" color shape shadow balance">
 					<h2>USDT余额</h2>
 					<span>{formatNumber(account.usdtBalance)}</span>

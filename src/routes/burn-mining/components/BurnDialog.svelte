@@ -8,7 +8,9 @@
 </script>
 
 <div id="burn-dialog">
+	<h2>值必须大于 100</h2>
 	<input bind:value={burnAmount} type="number" placeholder="你想烧多少" />
+
 	<div id="button-container">
 		<button
 			id="burn-button"

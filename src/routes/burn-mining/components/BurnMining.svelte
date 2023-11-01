@@ -19,7 +19,7 @@
 	}
 	$: burnPortfolio = $burnPortfolioStore;
 	$: totalNetworkBurn = $totalBurnedStore;
-	$: dividendsDue = burnPortfolio ? calculateDividends() : 0;
+	$: dividendsDue = burnPortfolio && totalNetworkBurn ? calculateDividends() : 0;
 </script>
 
 <div id="burn-mining">

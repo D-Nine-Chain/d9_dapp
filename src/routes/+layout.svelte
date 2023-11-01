@@ -5,7 +5,7 @@
 	import { checkForBrowserExtension, getAccountsFromBrowser, prepAccount } from '$lib/chain';
 	import { goto } from '$app/navigation';
 	import type { TransactionNotification } from '$lib/types/types';
-	import { TransactionStatus } from '$lib/utils';
+	import { TransactionStatus, sendNotification, sendToast } from '$lib/utils';
 	let showNoAccountModal: boolean = true;
 	let extensions: any[] = [];
 	let transactionColor: string = '';
@@ -17,40 +17,20 @@
 	onMount(async () => {
 		extensions = await checkForBrowserExtension();
 		const accounts = extensions.length > 0 ? await getAccountsFromBrowser() : [];
+		sendToast('寻找兼容的浏览器钱包');
 		console.log('accounts are ', accounts);
 		if (accounts.length > 0) {
+			sendToast('发现浏览器扩展');
 			console.log('found accounts, preppping the first one');
-			await prepAccount(accounts[0]);
+			try {
+				await prepAccount(accounts[0]);
+				sendToast('所有数据均已记录', 'success');
+			} catch (e) {
+				sendNotification('error', '无法准备帐户', '看来我们遇到了错误');
+			}
 		}
 	});
-	function displayNotification(notification: TransactionNotification) {
-		let status: string;
-		let type: string;
-		// Here we determine the message based on the notification status
-		switch (notification.status) {
-			case TransactionStatus.Broadcast:
-				status = '正在广播';
-				type = 'warning';
-				break;
-			case TransactionStatus.InBlock:
-				status = '在区块中';
-				type = 'warning';
-				break;
-			case TransactionStatus.Finalized:
-				status = '已完成';
-				type = 'success';
-				break;
-			case TransactionStatus.Error:
-				status = '出现错误';
-				type = 'error';
-				break;
-			default:
-				status = '未知状态';
-				type = 'warning';
-		}
 
-		// Assuming addNotification is a function that takes an object with a text and position property
-	}
 	$: {
 		if (extensions.length > 0) {
 			showNoAccountModal = false;
@@ -225,22 +205,5 @@
 		background-color: var(--primary-color);
 		color: white;
 		border-radius: 0;
-	}
-	#transaction-update {
-		display: flex;
-		flex-direction: column;
-		position: fixed; /* Fixed position */
-		bottom: 0; /* Locked to the bottom */
-		left: 0; /* Aligned to the left side */
-		width: 100%; /* Full width */
-		padding: 10px; /* Some padding, adjust as needed */
-		box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-		color: white;
-	}
-	.is-error {
-		background-color: var(--red);
-	}
-	.is-good {
-		background-color: var(--green);
 	}
 </style>

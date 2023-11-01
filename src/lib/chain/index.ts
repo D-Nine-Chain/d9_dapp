@@ -8,10 +8,11 @@ import { getAPI } from "./polkadot"
 import { getBurnPortfolio, getTotalBurned } from '$lib/contracts/burn';
 import { get } from "svelte/store";
 import { accountStore, d9BalanceStore } from "$lib/store";
-import { Currency, reduceByCurrencyDecimal } from "$lib/utils";
+import { Currency, reduceByCurrencyDecimal, sendNotification, sendToast } from "$lib/utils";
 import { web3FromAddress } from "@polkadot/extension-dapp";
 import { getUSDTBalance, updateUSDTBalance } from "$lib/contracts/usdt";
 import type { Account } from "$lib/types/types";
+import Swal from "sweetalert2";
 export * from './polkadot';
 // customTypes.d.ts
 
@@ -21,11 +22,22 @@ export async function prepAccount(injectedAccount: any) {
    const injector = await web3FromAddress(injectedAccount.address);
    injectedAccount.signer = injector.signer;
    accountStore.set(injectedAccount);
-   await updateAccountWithStorageData(injectedAccount);
-   console.log('prep account address ', injectedAccount.address)
-   await updateBurnData(injectedAccount.address);
-   await updateAncestors(injectedAccount)
-   await updateUSDTBalance();
+   try {
+      sendToast("1/5 从区块链检索帐户数据")
+      await updateAccountWithStorageData(injectedAccount);
+      console.log('prep account address ', injectedAccount.address)
+      sendToast("2/5 检索烧伤组合")
+      await updateBurnData(injectedAccount.address);
+      sendToast("3/5 检索烧伤组合")
+      await updateAncestors(injectedAccount)
+      sendToast("4/5 得到祖先")
+      await updateUSDTBalance();
+      sendToast("5/5 获取USDT余额")
+   } catch (e) {
+      sendNotification("error", "错误", "准备帐户时出错。")
+      console.log("error prepping ", e)
+   }
+
 }
 
 export async function getParent(account: string) {
@@ -45,6 +57,7 @@ export async function updateAncestors(account: Account) {
 
 export async function updateBurnData(address: string) {
    console.log("updating data")
+   sendToast("更新烧伤数据")
    await getBurnPortfolio(address);
    await getTotalBurned();
 }
