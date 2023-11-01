@@ -31,14 +31,14 @@
 		<h2 id="balance-paid">{reduceByCurrencyDecimal(burnPortfolio.balancePaid, Currency.D9)}</h2>
 		<!-- Placeholder, update this with actual data -->
 	</div>
-
-	<div class="data">
-		<h3>⏳最后燃烧时间</h3>
-		<Time relative timestamp={burnPortfolio.lastBurn.time} />
-		<h2 id="last-burn-time">{new Date(burnPortfolio.lastBurn.time).toLocaleString()}</h2>
-		<!-- Placeholder, update this with actual data -->
-	</div>
-
+	{#if burnPortfolio.lastBurn}
+		<div class="data">
+			<h3>⏳最后燃烧时间</h3>
+			<Time relative timestamp={burnPortfolio.lastBurn.time} />
+			<h2 id="last-burn-time">{new Date(burnPortfolio.lastBurn.time).toLocaleString()}</h2>
+			<!-- Placeholder, update this with actual data -->
+		</div>
+	{/if}
 	<!-- <div class="data">
 		<h3>🤖 最后燃烧合同</h3>
 		<p id="last-burn-contract">{burnPortfolio.lastBurn.contract}</p>

@@ -6,6 +6,7 @@ import { updateBurnData } from '$lib/chain';
 import { Currency, reduceByCurrencyDecimal, toBigNumberString, updateTransactionInfo } from '$lib/utils';
 import { getContract } from '..';
 import { TransactionStatus } from '$lib/utils';
+import { hexToBn } from '@polkadot/util';
 export async function getBurnPortfolio(address: string) {
    const main = await getContract("main");
    console.log("address in get burn portfolio function call is ", address)
@@ -34,8 +35,9 @@ export async function getTotalBurned() {
       gasLimit: await getReadGasLimit(),
       storageDepositLimit: STORAGE_DEPOSIT_LIMIT
    });
-   console.log("total burned", output.toJSON())
-   totalBurnedStore.set(reduceByCurrencyDecimal(output.toJSON().ok, Currency.D9))
+   console.log("total burned", output.toJSON().ok)
+
+   totalBurnedStore.set(reduceByCurrencyDecimal(hexToBn(output.toJSON().ok).toString(), Currency.D9))
 }
 
 export function getReturnPercent() {

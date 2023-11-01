@@ -22,6 +22,7 @@ export async function prepAccount(injectedAccount: any) {
    injectedAccount.signer = injector.signer;
    accountStore.set(injectedAccount);
    await updateAccountWithStorageData(injectedAccount);
+   console.log('prep account address ', injectedAccount.address)
    await updateBurnData(injectedAccount.address);
    await updateAncestors(injectedAccount)
    await updateUSDTBalance();
