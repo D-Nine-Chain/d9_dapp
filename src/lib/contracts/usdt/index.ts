@@ -2,7 +2,6 @@ import { accountStore, usdtBalanceStore } from '$lib/store';
 import { STORAGE_DEPOSIT_LIMIT, getReadGasLimit } from '$lib/chain/polkadot';
 import { get } from 'svelte/store';
 
-import { BN } from '@polkadot/util';
 import { getContract } from '..';
 import { Currency, reduceByCurrencyDecimal } from '$lib/utils';
 

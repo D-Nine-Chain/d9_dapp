@@ -2,8 +2,7 @@ import { accountStore, liquidityProviderStore, currencyReservesStore } from '$li
 import { STORAGE_DEPOSIT_LIMIT, getGasLimit, getReadGasLimit } from '$lib/chain/polkadot';
 import { get } from 'svelte/store';
 
-import { BN } from '@polkadot/util';
-import { Currency, reduceByCurrencyDecimal, toBigNumberString } from '$lib/utils';
+import { Currency, reduceByCurrencyDecimal, sendNotification, toBigNumberString } from '$lib/utils';
 import { contracts, getContract } from '..';
 import { updateUSDTBalance } from '../usdt';
 import type { Account } from '$lib/types/types';
@@ -67,11 +66,14 @@ export async function purchaseUSDT(d9Amount: number) {
    })
       .signAndSend(account?.address, { signer: account?.signer }, async (result) => {
          if (result.status.isInBlock) {
+            sendNotification("info", "交易状态", "2/3 交易已包含在区块中");
             console.log(`Transaction included in block: ${result.status.asInBlock}`);
             await updateUSDTBalance();
          } else if (result.status.isFinalized) {
+            sendNotification("success", "交易状态", "交易已完成");
             console.log(`Transaction finalized in block: ${result.status.asFinalized}`);
          } else if (result.status.isBroadcast) {
+            sendNotification("info", "请稍等", "1/3 交易已广播");
             console.log('Transaction has been broadcasted');
          } else if (result.status.isReady) {
             console.log('Transaction is ready');
@@ -84,6 +86,7 @@ export async function purchaseUSDT(d9Amount: number) {
             result.events.forEach((e) => {
                console.log(e)
             })
+            sendNotification("error", "交易错误", `${JSON.stringify(result.dispatchError.toHuman())}`);
             console.error('Transaction failed with dispatch error:', result.dispatchError.toHuman());
          }
       });

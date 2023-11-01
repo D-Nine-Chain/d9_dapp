@@ -41,7 +41,6 @@ export function sendToast(title: string, icon: SweetAlertIcon = "info") {
       icon: icon,
       title: title,
       // text: text,
-      backdrop: true,
       showConfirmButton: false,
       color: 'darkblue',
       background: "#eefcff",

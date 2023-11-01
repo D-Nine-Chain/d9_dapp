@@ -4,7 +4,7 @@ import { STORAGE_DEPOSIT_LIMIT, getGasLimit, getReadGasLimit } from '$lib/chain/
 import { get } from 'svelte/store';
 import { getContract } from '$lib/contracts';
 import { BN, hexToBn } from '@polkadot/util';
-import { Currency, reduceByCurrencyDecimal, toBigNumberString } from '$lib/utils';
+import { Currency, reduceByCurrencyDecimal, sendNotification, toBigNumberString } from '$lib/utils';
 import type { Account, MerchantAccount } from '$lib/types/types';
 
 export async function updateMerchantAccount() {
@@ -66,11 +66,14 @@ export async function d9Subscribe(months: number) {
    })
       .signAndSend(account?.address, { signer: account?.signer }, async (result: any) => {
          if (result.status.isInBlock) {
+            sendNotification("info", "交易状态", "2/3 交易已包含在区块中")
             console.log(`Transaction included in block: ${result.status.asInBlock}`);
             await getMerchantAccountExpiry();
          } else if (result.status.isFinalized) {
+            sendNotification("success", "交易状态", "3/3 交易已完成");
             console.log(`Transaction finalized in block: ${result.status.asFinalized}`);
          } else if (result.status.isBroadcast) {
+            sendNotification("info", "请稍等", "1/3 交易已广播")
             console.log('Transaction has been broadcasted');
          } else if (result.status.isReady) {
             console.log('Transaction is ready');
@@ -83,6 +86,7 @@ export async function d9Subscribe(months: number) {
             result.events.forEach((e: any) => {
                console.log(e)
             })
+            sendNotification("error", "交易错误", `${JSON.stringify(result.dispatchError.toHuman())}`);
             console.error('Transaction failed with dispatch error:', result.dispatchError.toHuman());
          }
       });
@@ -98,11 +102,14 @@ export async function giveGreenPoints(address: string, amount: number) {
       value: toBigNumberString(amount, Currency.D9)
    }, address).signAndSend(account?.address, { signer: account?.signer }, async (result: any) => {
       if (result.status.isInBlock) {
+         sendNotification("info", "交易状态", "2/3 交易已包含在区块中")
          console.log(`Transaction included in block: ${result.status.asInBlock}`);
          await updateMerchantAccount();
       } else if (result.status.isFinalized) {
+         sendNotification("success", "交易状态", "3/3 交易已完成");
          console.log(`Transaction finalized in block: ${result.status.asFinalized}`);
       } else if (result.status.isBroadcast) {
+         sendNotification("info", "请稍等", "1/3 交易已广播")
          console.log('Transaction has been broadcasted');
       } else if (result.status.isReady) {
          console.log('Transaction is ready');
@@ -115,6 +122,7 @@ export async function giveGreenPoints(address: string, amount: number) {
          result.events.forEach((e: any) => {
             console.log(e)
          })
+         sendNotification("error", "交易错误", `${JSON.stringify(result.dispatchError.toHuman())}`);
          console.error('Transaction failed with dispatch error:', result.dispatchError.toHuman());
       }
    });
@@ -130,10 +138,13 @@ export async function redeemD9() {
    }).signAndSend(account?.address, { signer: account?.signer }, async (result: any) => {
       if (result.status.isInBlock) {
          console.log(`Transaction included in block: ${result.status.asInBlock}`);
+         sendNotification("info", "交易状态", "2/3 交易已包含在区块中")
          await updateMerchantAccount();
       } else if (result.status.isFinalized) {
+         sendNotification("success", "交易状态", "3/3 交易已完成");
          console.log(`Transaction finalized in block: ${result.status.asFinalized}`);
       } else if (result.status.isBroadcast) {
+         sendNotification("info", "请稍等", "1/3 交易已广播")
          console.log('Transaction has been broadcasted');
       } else if (result.status.isReady) {
          console.log('Transaction is ready');
@@ -146,6 +157,7 @@ export async function redeemD9() {
          result.events.forEach((e: any) => {
             console.log(e)
          })
+         sendNotification("error", "交易错误", `${JSON.stringify(result.dispatchError.toHuman())}`);
          console.error('Transaction failed with dispatch error:', result.dispatchError.toHuman());
       }
    });
