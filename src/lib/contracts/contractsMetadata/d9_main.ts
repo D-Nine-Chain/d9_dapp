@@ -1,6 +1,6 @@
 export const mainABI = {
    "source": {
-      "hash": "0x96f7b26f80e8ce7b57e62e5de98abd51dca74fcd91f333213eb8bd6136ca3711",
+      "hash": "0xd19e2cced986202cbb4f24319dd005f7f2c388c8a65c5c6ab8fac29febf2e372",
       "language": "ink! 4.3.0",
       "compiler": "rustc 1.72.0",
       "build_info": {
@@ -14,8 +14,8 @@ export const mainABI = {
       }
    },
    "contract": {
-      "name": "d9-main",
-      "version": "0.1.0",
+      "name": "d9-burn-manager",
+      "version": "1.0.0",
       "authors": [
          "D9Dev"
       ]
@@ -411,7 +411,7 @@ export const mainABI = {
                                     {
                                        "layout": {
                                           "leaf": {
-                                             "key": "0x3c232a60",
+                                             "key": "0x249fe4b2",
                                              "ty": 4
                                           }
                                        },
@@ -420,7 +420,7 @@ export const mainABI = {
                                     {
                                        "layout": {
                                           "leaf": {
-                                             "key": "0x3c232a60",
+                                             "key": "0x249fe4b2",
                                              "ty": 4
                                           }
                                        },
@@ -429,7 +429,7 @@ export const mainABI = {
                                     {
                                        "layout": {
                                           "leaf": {
-                                             "key": "0x3c232a60",
+                                             "key": "0x249fe4b2",
                                              "ty": 4
                                           }
                                        },
@@ -438,7 +438,7 @@ export const mainABI = {
                                     {
                                        "layout": {
                                           "enum": {
-                                             "dispatchKey": "0x3c232a60",
+                                             "dispatchKey": "0x249fe4b2",
                                              "name": "Option",
                                              "variants": {
                                                 "0": {
@@ -454,7 +454,7 @@ export const mainABI = {
                                                                   {
                                                                      "layout": {
                                                                         "leaf": {
-                                                                           "key": "0x3c232a60",
+                                                                           "key": "0x249fe4b2",
                                                                            "ty": 5
                                                                         }
                                                                      },
@@ -463,7 +463,7 @@ export const mainABI = {
                                                                   {
                                                                      "layout": {
                                                                         "leaf": {
-                                                                           "key": "0x3c232a60",
+                                                                           "key": "0x249fe4b2",
                                                                            "ty": 0
                                                                         }
                                                                      },
@@ -490,7 +490,7 @@ export const mainABI = {
                                                 {
                                                    "layout": {
                                                       "leaf": {
-                                                         "key": "0x3c232a60",
+                                                         "key": "0x249fe4b2",
                                                          "ty": 5
                                                       }
                                                    },
@@ -499,7 +499,7 @@ export const mainABI = {
                                                 {
                                                    "layout": {
                                                       "leaf": {
-                                                         "key": "0x3c232a60",
+                                                         "key": "0x249fe4b2",
                                                          "ty": 0
                                                       }
                                                    },
@@ -515,7 +515,7 @@ export const mainABI = {
                                  "name": "BurnPortfolio"
                               }
                            },
-                           "root_key": "0x3c232a60"
+                           "root_key": "0x249fe4b2"
                         }
                      },
                      "name": "portfolios"
@@ -530,7 +530,7 @@ export const mainABI = {
                      "name": "total_amount_burned"
                   }
                ],
-               "name": "D9Main"
+               "name": "D9BurnManager"
             }
          },
          "root_key": "0x00000000"
